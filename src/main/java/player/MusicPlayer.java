@@ -5,30 +5,32 @@ import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
 public class MusicPlayer {
+
     private MediaPlayer mediaPlayer;
 
-    public void load(Playlist play,int i) {
-        Media media = new Media(play.songs.get(i).url); 
+    public void load(Playlist play, int i) {
+        Media media = new Media(play.songs.get(i).url);
         mediaPlayer = new MediaPlayer(media);
     }
 
-        public void play() {
-            if (mediaPlayer != null) {
-                mediaPlayer.play();
-            }
+    public void play() {
+        if (mediaPlayer != null) {
+            mediaPlayer.play();
         }
+    }
 
-        public void pause() {
-            if (mediaPlayer != null) {
-                mediaPlayer.pause();
-            }
+    public void pause() {
+        if (mediaPlayer != null) {
+            mediaPlayer.pause();
         }
+    }
 
-        public void stop() {
-            if (mediaPlayer != null) {
-                mediaPlayer.pause();
-            }
+    public void stop() {
+        if (mediaPlayer != null) {
+            mediaPlayer.pause();
         }
+    }
+
     public int getCurrentPosition() {
         if (mediaPlayer != null) {
             Duration currentTime = mediaPlayer.getCurrentTime();
@@ -57,6 +59,7 @@ public class MusicPlayer {
             mediaPlayer.seek(Duration.millis(millis));
         }
     }
+
     public void setRate(double rate) {
         if (mediaPlayer != null) {
             // Ustawienie prędkości odtwarzania **po** załadowaniu medi (gdy MediaPlayer jest READY)
@@ -65,5 +68,5 @@ public class MusicPlayer {
             });
         }
     }
-    
+
 }

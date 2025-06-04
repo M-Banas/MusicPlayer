@@ -33,3 +33,35 @@
     -fx-background-color: #1DB954;
     -fx-text-fill: black;
 }
+
+.custom-alert {
+    -fx-background-color: #1e1e1e;
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+.custom-alert .label {
+    -fx-text-fill: white;
+}
+
+.custom-alert .content {
+    -fx-text-fill: white;
+}
+
+.custom-alert .header-panel {
+    -fx-background-color: transparent;
+    -fx-text-fill: #1DB954;
+}
+
+.custom-alert .button {
+    -fx-background-color: transparent;
+    -fx-border-color: #1DB954;
+    -fx-text-fill: #1DB954;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-padding: 5 15;
+}
+
+.custom-alert .button:hover {
+    -fx-background-color: #1DB954;
+    -fx-text-fill: black;
+}

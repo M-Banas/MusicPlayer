@@ -1,14 +1,16 @@
 package player.ui;
 
+import java.util.List;
+
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import player.audio.MusicPlayer;
 import player.manager.PlaylistManager;
 import player.model.Playlist;
 import player.model.Song;
-
-import java.util.List;
 
 public class MainViewController {
 
@@ -21,31 +23,32 @@ public class MainViewController {
     private int currentIndex = 0;
     private boolean isSeeking = false;
     private AnimationTimer timer;
-
+    
     @FXML
     public void initialize() {
         List<Song> songs = List.of(
                 new Song("1", "Song One", "Artist A", "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"),
-                new Song("2", "Song Two", "Artist B", "https://www.bensound.com/bensound-music/bensound-summer.mp3")
+                new Song("2", "Song Two", "Artist B", "https://www.bensound.com/bensound-music/bensound-summer.mp3"),
+                new Song("3","Song 3","Artist C","https://www.bensound.com/bensound-music/bensound-sunny.mp3")
         );
         playlist = new Playlist("Example Playlist", songs);
         PlaylistManager.savePlaylist(playlist, "playlist.json");
-
         progressSlider.setOnMousePressed(e -> isSeeking = true);
         progressSlider.setOnMouseReleased(e -> {
             isSeeking = false;
             int seekPos = (int) ((progressSlider.getValue() / 100) * player.getDuration());
             player.seekTo(seekPos);
         });
-    }
-
-    @FXML
-    private void handlePlay() {
-        player.stop();
         player.load(playlist, currentIndex);
         player.setRate(1.0);
-        player.play();
+        player.setOnEndOfMedia(() -> handleNext());
+    }
+
+    
+    @FXML
+    private void handlePlay() {
         songTitleLabel.setText("Currently playing: " + playlist.songs.get(currentIndex).title);
+        player.playOrResume(playlist, currentIndex);
         startTimer();
     }
 
@@ -61,10 +64,18 @@ public class MainViewController {
 
     @FXML
     private void handleNext() {
-        player.stop();
-        currentIndex = (currentIndex + 1) % playlist.songs.size();
-        handlePlay();
+    currentIndex = (currentIndex + 1) % playlist.songs.size();
+    songTitleLabel.setText("Currently playing: " + playlist.songs.get(currentIndex).title);
+    player.next(playlist, currentIndex, this::handleNext);
+    startTimer();
     }
+
+    // @FXML
+    // private void handleOpenLogin() {
+    //     LoginWindow.show();
+    // }
+
+
 
     private void startTimer() {
         if (timer != null) {

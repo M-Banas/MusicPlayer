@@ -12,13 +12,71 @@ public class MusicPlayer {
     public void load(Playlist play, int i) {
         Media media = new Media(play.songs.get(i).url);
         mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setOnEndOfMedia(() -> {
+            
+        });
     }
+
+    public void load(Playlist play, int i, Runnable onEnd) {
+        Media media = new Media(play.songs.get(i).url);
+        mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setOnEndOfMedia(onEnd);
+    }
+
+    public void setOnEndOfMedia(Runnable r) {
+        if (mediaPlayer != null) {
+            mediaPlayer.setOnEndOfMedia(r);
+        }
+    }
+    
+
+    public void next(Playlist playlist, int nextIndex, Runnable onSongEnd) {
+        stop();
+        load(playlist, nextIndex);
+        setRate(1.0);
+    
+        if (mediaPlayer != null) {
+            mediaPlayer.setOnReady(() -> {
+                mediaPlayer.setOnEndOfMedia(onSongEnd);
+                mediaPlayer.play();
+            });
+        }
+    }
+    
+    
+    
 
     public void play() {
         if (mediaPlayer != null) {
             mediaPlayer.play();
+            System.out.println("a");
         }
     }
+
+    public void playOrResume(Playlist play, int i) {
+        if (mediaPlayer == null) {
+            load(play, i);
+            mediaPlayer.play();
+        } else {
+            MediaPlayer.Status status = mediaPlayer.getStatus();
+            if (status == MediaPlayer.Status.PAUSED || status == MediaPlayer.Status.STOPPED) {
+                mediaPlayer.play();
+            } else if (status == MediaPlayer.Status.READY) {
+                mediaPlayer.play();
+            } else {
+                // Inne statusy np. PLAYING lub READY, po prostu zignoruj lub zrób restart
+            }
+        }
+    }
+    
+    public boolean isLoaded() {
+        if (mediaPlayer == null) return false;
+        MediaPlayer.Status status = mediaPlayer.getStatus();
+        return status != MediaPlayer.Status.DISPOSED && status != MediaPlayer.Status.UNKNOWN;
+    }
+    
+    
+    
 
     public void pause() {
         if (mediaPlayer != null) {
@@ -28,7 +86,7 @@ public class MusicPlayer {
 
     public void stop() {
         if (mediaPlayer != null) {
-            mediaPlayer.pause();
+            mediaPlayer.stop();
         }
     }
 
@@ -69,5 +127,7 @@ public class MusicPlayer {
             });
         }
     }
+
+    
 
 }

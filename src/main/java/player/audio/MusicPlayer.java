@@ -64,7 +64,7 @@ public class MusicPlayer {
             } else if (status == MediaPlayer.Status.READY) {
                 mediaPlayer.play();
             } else {
-                // Inne statusy np. PLAYING lub READY, po prostu zignoruj lub zrób restart
+                
             }
         }
     }

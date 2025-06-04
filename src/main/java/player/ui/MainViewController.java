@@ -70,10 +70,6 @@ public class MainViewController {
     startTimer();
     }
 
-    // @FXML
-    // private void handleOpenLogin() {
-    //     LoginWindow.show();
-    // }
 
 
 

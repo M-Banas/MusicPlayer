@@ -16,6 +16,8 @@ public class LoginController {
     @FXML
     private PasswordField passwordField;
 
+
+    //logowanie z wstepna logika
     @FXML
     private void handleLogin() {
         String user = usernameField.getText();
@@ -30,7 +32,7 @@ public class LoginController {
             alert.setHeaderText("Niepoprawne dane logowania");
             alert.setContentText("Spróbuj ponownie.");
 
-            // ✨ DODAJ styl z style.css
+            
             DialogPane dialogPane = alert.getDialogPane();
             dialogPane.getStylesheets().add(
                 getClass().getResource("/ui/style.css").toExternalForm()

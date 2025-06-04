@@ -9,21 +9,21 @@ import javafx.stage.Stage;
 public class Main extends Application {
     @Override
 public void start(Stage primaryStage) throws Exception {
-    // 1. Ładujemy FXML logowania
+
     FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("/ui/LoginView.fxml"));
     Parent loginRoot = loginLoader.load();
 
-    // 2. Tworzymy scenę logowania + dodajemy CSS
+   
     Scene loginScene = new Scene(loginRoot);
     loginScene.getStylesheets().add(getClass().getResource("/ui/style.css").toExternalForm());
 
-    // 3. Pokazujemy okno logowania
+    // Logowanie
     Stage loginStage = new Stage();
     loginStage.setTitle("Login");
     loginStage.setScene(loginScene);
-    loginStage.showAndWait();  // blokuje do momentu zamknięcia
+    loginStage.showAndWait(); 
 
-    // 4. Po logowaniu pokazujemy główną scenę
+    // MainView
     FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("/ui/MainView.fxml"));
     Parent mainRoot = mainLoader.load();
 

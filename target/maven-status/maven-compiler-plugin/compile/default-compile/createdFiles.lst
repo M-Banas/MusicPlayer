@@ -1,8 +1,9 @@
-player/PlaylistManager$1.class
-player/Song.class
-player/PlaylistManager.class
-player/MusicPlayer.class
-player/FileChooserHelper.class
-player/Playlist.class
-player/Main$1.class
-player/Main.class
+player\audio\MusicPlayer.class
+player\model\Playlist.class
+player\ui\Main.class
+player\manager\PlaylistManager$1.class
+player\model\Song.class
+player\manager\PlaylistManager.class
+player\ui\MainViewController$1.class
+player\ui\MainViewController.class
+player\util\FileChooserHelper.class

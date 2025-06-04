@@ -1,4 +1,4 @@
-package player;
+package player.manager;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -7,6 +7,8 @@ import java.lang.reflect.Type;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import player.model.Playlist;
 
 public class PlaylistManager {
     private static final Gson gson = new Gson();

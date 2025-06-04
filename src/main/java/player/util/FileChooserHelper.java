@@ -1,4 +1,4 @@
-package player;
+package player.util;
 
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;

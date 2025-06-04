@@ -1,8 +1,9 @@
-package player;
+package player.audio;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
+import player.model.Playlist;
 
 public class MusicPlayer {
 

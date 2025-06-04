@@ -1,6 +1,4 @@
-package player;
-
-
+package player.model;
 
 public class Song {
     public String id;

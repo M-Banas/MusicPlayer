@@ -7,13 +7,15 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import player.audio.MusicPlayer;
 import player.manager.PlaylistManager;
 import player.model.Playlist;
 import player.model.Song;
 
 public class MainViewController {
-
+    
     @FXML private Button playButton, pauseButton, stopButton, nextButton;
     @FXML private Slider progressSlider;
     @FXML private Label songTitleLabel;
@@ -123,4 +125,62 @@ public class MainViewController {
         };
         timer.start();
     }
+
+    @FXML
+    private TextField searchField;
+
+    @FXML
+    private void handleSearch(KeyEvent event) {
+        String query = searchField.getText().trim();
+        if (!query.isEmpty()) {
+            String match = findClosestSongMatch(query);
+            if (match != null) {
+                songTitleLabel.setText("Matching: " + match);
+            } else {
+                songTitleLabel.setText("No match");
+            }
+        }
+    }
+
+    // Prosty algorytm podobieństwa (można ulepszyć Levenshteinem)
+    private String findClosestSongMatch(String query) {
+        double maxScore = 0.0;
+        String bestMatch = null;
+
+        for (String title : allSongs) { // załóżmy, że masz listę allSongs
+            double score = similarity(query.toLowerCase(), title.toLowerCase());
+            if (score > maxScore && score >= 0.8) {
+                maxScore = score;
+                bestMatch = title;
+            }
+        }
+        return bestMatch;
+    }
+
+    // Prosty współczynnik podobieństwa
+    private double similarity(String s1, String s2) {
+        int maxLength = Math.max(s1.length(), s2.length());
+        if (maxLength == 0) return 1.0;
+        int distance = levenshteinDistance(s1, s2);
+        return 1.0 - ((double) distance / maxLength);
+    }
+
+    private int levenshteinDistance(String lhs, String rhs) {
+        int[][] dp = new int[lhs.length() + 1][rhs.length() + 1];
+        for (int i = 0; i <= lhs.length(); i++) {
+            for (int j = 0; j <= rhs.length(); j++) {
+                if (i == 0) dp[i][j] = j;
+                else if (j == 0) dp[i][j] = i;
+                else {
+                    int cost = lhs.charAt(i - 1) == rhs.charAt(j - 1) ? 0 : 1;
+                    dp[i][j] = Math.min(
+                        Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1),
+                        dp[i - 1][j - 1] + cost
+                    );
+                }
+            }
+        }
+        return dp[lhs.length()][rhs.length()];
+    }
+
 }

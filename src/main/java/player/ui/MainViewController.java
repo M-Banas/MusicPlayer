@@ -1,12 +1,14 @@
 package player.ui;
 
 import java.util.List;
-
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import player.audio.MusicPlayer;
 import player.manager.PlaylistManager;
 import player.model.Playlist;
@@ -64,14 +66,11 @@ public class MainViewController {
 
     @FXML
     private void handleNext() {
-    currentIndex = (currentIndex + 1) % playlist.songs.size();
-    songTitleLabel.setText("Currently playing: " + playlist.songs.get(currentIndex).title);
-    player.next(playlist, currentIndex, this::handleNext);
-    startTimer();
+        currentIndex = (currentIndex + 1) % playlist.songs.size();
+        songTitleLabel.setText("Currently playing: " + playlist.songs.get(currentIndex).title);
+        player.next(playlist, currentIndex, this::handleNext);
+        startTimer();
     }
-
-
-
 
     private void startTimer() {
         if (timer != null) {
@@ -93,4 +92,57 @@ public class MainViewController {
         };
         timer.start();
     }
+
+    @FXML private VBox playlistContainer;
+    @FXML private Button newPlaylistButton;
+
+    @FXML
+    private void handleNewPlaylist() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("New Playlist");
+        dialog.setHeaderText("Create a new playlist");
+        dialog.setContentText("Enter playlist name:");
+
+        dialog.showAndWait().ifPresent(name -> {
+            if (!name.trim().isEmpty()) {
+                addPlaylistToSidebar(name.trim());
+            }
+        });
+    }
+
+    private void addPlaylistToSidebar(String name) {
+        HBox playlistBox = new HBox(10);
+        playlistBox.setStyle(
+            "-fx-background-color: #121212;" +   
+            "-fx-padding: 8 10 8 10;" +
+            "-fx-border-radius: 6;" +
+            "-fx-background-radius: 6;"
+        );
+        playlistBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        playlistBox.setMinHeight(30);
+
+        Label icon = new Label("🎵");
+        icon.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
+
+        Label nameLabel = new Label(name);
+        nameLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
+
+        playlistBox.getChildren().addAll(icon, nameLabel);
+
+        playlistBox.setOnMouseEntered(e -> playlistBox.setStyle(
+            "-fx-background-color: #555555; " + 
+            "-fx-padding: 8 10 8 10; " +
+            "-fx-border-radius: 6; " +
+            "-fx-background-radius: 6;"));
+        playlistBox.setOnMouseExited(e -> playlistBox.setStyle(
+            "-fx-background-color: #333333;" +
+            "-fx-padding: 8 10 8 10;" +
+            "-fx-border-radius: 6;" +
+            "-fx-background-radius: 6;"));
+
+        playlistContainer.getChildren().add(playlistBox);
+    }
+
+
+
 }

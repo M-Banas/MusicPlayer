@@ -1,6 +1,5 @@
 package player.ui;
 
-import java.util.List;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -12,7 +11,7 @@ import javafx.scene.layout.VBox;
 import player.audio.MusicPlayer;
 import player.manager.PlaylistManager;
 import player.model.Playlist;
-import player.model.Song;
+import player.model.SongRepository;
 
 public class MainViewController {
 
@@ -28,13 +27,9 @@ public class MainViewController {
     
     @FXML
     public void initialize() {
-        List<Song> songs = List.of(
-                new Song("1", "Song One", "Artist A", "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"),
-                new Song("2", "Song Two", "Artist B", "https://www.bensound.com/bensound-music/bensound-summer.mp3"),
-                new Song("3","Song 3","Artist C","https://www.bensound.com/bensound-music/bensound-sunny.mp3")
-        );
-        playlist = new Playlist("Example Playlist", songs);
-        PlaylistManager.savePlaylist(playlist, "playlist.json");
+        SongRepository songsRepository = new SongRepository();
+        System.out.println("Available songs: " + songsRepository.getSongs().size());
+        playlist = PlaylistManager.loadPlaylist("playlist.json");
         progressSlider.setOnMousePressed(e -> isSeeking = true);
         progressSlider.setOnMouseReleased(e -> {
             isSeeking = false;
@@ -42,7 +37,6 @@ public class MainViewController {
             player.seekTo(seekPos);
         });
         player.load(playlist, currentIndex);
-        player.setRate(1.0);
         player.setOnEndOfMedia(() -> handleNext());
     }
 

@@ -1,5 +1,6 @@
 package player.ui;
 
+import java.util.List;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -24,12 +25,19 @@ public class MainViewController {
     private int currentIndex = 0;
     private boolean isSeeking = false;
     private AnimationTimer timer;
-    
+    private int User=2;
     @FXML
     public void initialize() {
+        List<Playlist> playlists = PlaylistManager.loadPlaylists(User);
+        if (playlists != null) {
+            for (var playlist : playlists) {
+                System.out.println("Loaded playlist: " + playlist.name);
+                addPlaylistToSidebar(playlist.name);
+            }
+        }
         SongRepository songsRepository = new SongRepository();
         System.out.println("Available songs: " + songsRepository.getSongs().size());
-        playlist = PlaylistManager.loadPlaylist("playlist.json");
+        playlist = new Playlist("wszystkie",songsRepository.getSongs());
         progressSlider.setOnMousePressed(e -> isSeeking = true);
         progressSlider.setOnMouseReleased(e -> {
             isSeeking = false;
@@ -99,6 +107,7 @@ public class MainViewController {
 
         dialog.showAndWait().ifPresent(name -> {
             if (!name.trim().isEmpty()) {
+                PlaylistManager.createPlaylist(name.trim(), User);
                 addPlaylistToSidebar(name.trim());
             }
         });

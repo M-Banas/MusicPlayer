@@ -1,5 +1,6 @@
 package player.ui;
 
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -11,7 +12,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-
+   
         FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("/ui/LoginView.fxml"));
         Parent loginRoot = loginLoader.load();
 

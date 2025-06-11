@@ -23,10 +23,6 @@ public class SongRepository {
         }
         return songs;
     }
-    public List<Song> loadSongs() {
-        fetchSongs();
-        return songs;
-    }
 
     public  void fetchSongs() {
         try {
@@ -42,5 +38,9 @@ public class SongRepository {
         }
     }
 
+    public List<Song> loadSongs() {
+        fetchSongs();
+        return songs;
+    }
     
 }

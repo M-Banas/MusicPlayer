@@ -62,6 +62,7 @@ public class PlaylistManager {
         }
     }
 
+
     // Tworzenie nowej playlisty przez endpoint
     public static boolean createPlaylist(String name, int ownerId) {
         try {

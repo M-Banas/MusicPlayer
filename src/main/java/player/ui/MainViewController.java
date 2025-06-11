@@ -22,6 +22,7 @@ import player.audio.MusicPlayer;
 import player.manager.PlaylistManager;
 import player.model.Playlist;
 import player.model.Song;
+
 import player.model.SongRepository;
 
 public class MainViewController {
@@ -63,15 +64,41 @@ public class MainViewController {
     public void initialize() {
         songRepository.fetchSongs();
         allSongs = songRepository.loadSongs();
-        showHomeView();
 
         // utwórz domyślną playlistę
         Playlist defaultPl = new Playlist("Ulubione", new ArrayList<>());
         playlists.add(defaultPl);
         currentPlaylist = defaultPl;
-
         addPlaylistToSidebar(defaultPl);
 
+// =======
+//     private int User=2;
+//     @FXML
+//     public void initialize() {
+//         List<Playlist> playlists = PlaylistManager.loadPlaylists(User);
+//         if (playlists != null) {
+//             for (var playlist : playlists) {
+//                 System.out.println("Loaded playlist: " + playlist.name);
+//                 addPlaylistToSidebar(playlist.name);
+//             }
+//         }
+//         SongRepository songsRepository = new SongRepository();
+//         System.out.println("Available songs: " + songsRepository.getSongs().size());
+//         playlist = new Playlist("wszystkie",songsRepository.getSongs());
+// >>>>>>> e45809f2d97f1bc25a7f40ad5d4d33c483320d8a
+        playlistContainer.setPadding(new Insets(10));
+        playlistContainer.setSpacing(10);
+        playlistContainer.setStyle("-fx-background-color: #333333; -fx-border-color: #555555; -fx-border-width: 1px;");
+
+        songsContainer.setPadding(new Insets(10));
+        songsContainer.setSpacing(10);
+        songsContainer.setStyle("-fx-background-color: #222222; -fx-border-color: #444444; -fx-border-width: 1px;");
+
+        searchResultsContainer.prefWidthProperty().bind(searchField.widthProperty());
+        searchResultsContainer.maxWidthProperty().bind(searchField.widthProperty());
+        searchResultsContainer.setPadding(new Insets(10));
+        searchResultsContainer.setSpacing(10);
+        
         progressSlider.setOnMousePressed(e -> isSeeking = true);
         progressSlider.setOnMouseReleased(e -> {
             isSeeking = false;
@@ -79,33 +106,25 @@ public class MainViewController {
             player.seekTo(seekPos);
         });
 
-        if (currentPlaylist != null && !currentPlaylist.getSongs().isEmpty()) {
-            player.load(currentPlaylist, 0);
-        }
+        // Obsługa slidera postępu home
+        setupHomeSlider();
 
+        // Obsługa końca utworu
         player.setRate(1.0);
         player.setOnEndOfMedia(() -> handleNext());
 
+        // Obsługa wyszukiwania
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
             filterSongs(newValue);
         });
-        searchResultsContainer.prefWidthProperty().bind(searchField.widthProperty());
-        searchResultsContainer.maxWidthProperty().bind(searchField.widthProperty());
-        searchResultsContainer.setPadding(new Insets(10));
-        searchResultsContainer.setSpacing(10);
 
-        // Inicjalizacja kontenera playlist
-        playlistContainer.setPadding(new Insets(10));
-        playlistContainer.setSpacing(10);
-        playlistContainer.setStyle("-fx-background-color: #333333; -fx-border-color: #555555; -fx-border-width: 1px;");
-
-        // Inicjalizacja kontenera piosenek
-        songsContainer.setPadding(new Insets(10));
-        songsContainer.setSpacing(10);
-        songsContainer.setStyle("-fx-background-color: #222222; -fx-border-color: #444444; -fx-border-width: 1px;");
-        
+        // Pokaż panel home na start
         showHomeView();
-        setupHomeSlider();
+
+        // Jeśli domyślna playlista ma piosenki, załaduj ją (opcjonalnie)
+        if (currentPlaylist != null && !currentPlaylist.getSongs().isEmpty()) {
+            player.load(currentPlaylist, 0);
+        }
     }
 
     private void showHomeView() {
@@ -118,7 +137,8 @@ public class MainViewController {
         shuffledAllSongs = new ArrayList<>(allSongs);
         Collections.shuffle(shuffledAllSongs);
         homeCurrentIndex = 0;
-        updateHomeSongTitle();
+        homeSongTitleLabel.setText("Currently playing: -"); 
+        //updateHomeSongTitle();
         homeProgressSlider.setValue(0);
     }
 

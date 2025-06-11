@@ -72,3 +72,10 @@
     -fx-padding: 0 10 0 0;
 }
 
+.combo-box {
+    -fx-background-color: #4db34d;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: white;
+}

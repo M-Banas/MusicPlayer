@@ -10,7 +10,12 @@ public class MusicPlayer {
     private MediaPlayer mediaPlayer;
 
     public void load(Playlist play, int i) {
-        Media media = new Media(play.songs.get(i).url);
+        if (play == null || play.getSongs() == null || play.getSongs().size() <= i) {
+            System.out.println("Nie można załadować piosenki: brak utworów lub indeks poza zakresem");
+            return;
+        }
+
+        Media media = new Media(play.getSongs().get(i).url);
         mediaPlayer = new MediaPlayer(media);
         mediaPlayer.setOnEndOfMedia(() -> {
             
@@ -18,10 +23,24 @@ public class MusicPlayer {
     }
 
     public void load(Playlist play, int i, Runnable onEnd) {
-        Media media = new Media(play.songs.get(i).url);
+        if (play == null || play.getSongs() == null || play.getSongs().size() <= i) {
+            System.out.println("Nie można załadować piosenki: brak utworów lub indeks poza zakresem");
+            return;
+        }
+
+        Media media = new Media(play.getSongs().get(i).url);
         mediaPlayer = new MediaPlayer(media);
         mediaPlayer.setOnEndOfMedia(onEnd);
     }
+
+    // public void play() {
+    //     if (mediaPlayer != null) {
+    //         mediaPlayer.play();
+    //     } else {
+    //         System.out.println("mediaPlayer nie jest zainicjalizowany, nie można odtworzyć");
+    //     }
+    // }
+
 
     public void setOnEndOfMedia(Runnable r) {
         if (mediaPlayer != null) {
@@ -42,8 +61,6 @@ public class MusicPlayer {
             });
         }
     }
-    
-    
     
 
     public void play() {
@@ -74,8 +91,6 @@ public class MusicPlayer {
         MediaPlayer.Status status = mediaPlayer.getStatus();
         return status != MediaPlayer.Status.DISPOSED && status != MediaPlayer.Status.UNKNOWN;
     }
-    
-    
     
 
     public void pause() {
@@ -127,7 +142,5 @@ public class MusicPlayer {
             });
         }
     }
-
-    
 
 }

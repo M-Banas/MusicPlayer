@@ -12,4 +12,13 @@ public class Song {
         this.artist = artist;
         this.url = url;
     }
+    
+    public String getTitle() {
+        return title;
+    }
+
+    public String getArtist() {
+        return artist;
+    }
+
 }

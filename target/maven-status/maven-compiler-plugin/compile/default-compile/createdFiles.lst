@@ -1,4 +1,3 @@
-player\audio\MusicPlayer.class
 player\ui\Main.class
 player\manager\PlaylistManager$1.class
 player\model\Song.class
@@ -6,5 +5,4 @@ player\manager\PlaylistManager.class
 player\ui\MainViewController$1.class
 player\ui\LoginController.class
 player\model\Playlist.class
-player\ui\MainViewController.class
 player\util\FileChooserHelper.class

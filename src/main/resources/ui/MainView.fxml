@@ -6,41 +6,65 @@
 
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="player.ui.MainViewController">
     <top>
-        <StackPane>
-            <HBox spacing="20" alignment="CENTER_LEFT">
-                <Label text="🎵 Music Player" styleClass="header"/>
-            </HBox>
-        
-            <HBox alignment="CENTER">
-                <TextField fx:id="searchField" promptText="Wyszukaj piosenkę..." prefWidth="600"
-                    style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-padding: 5 10 5 10;"/>
-            </HBox>
-            
-            <HBox alignment="CENTER_RIGHT">
-                <Label fx:id="profileIcon" text="👤" style="-fx-font-size: 18px; -fx-text-fill: #4db3cf;"/>
-            </HBox>
-        </StackPane>
+        <HBox spacing="20" alignment="CENTER_LEFT">
+            <Label text="🎵 Music Player" styleClass="header"/>
+            <Region fx:id="spacer" HBox.hgrow="ALWAYS"/>
+            <Label fx:id="profileIcon" text="👤" style="-fx-font-size: 18px; -fx-text-fill: #4db3cf;"/>
+        </HBox>
     </top>
 
-
     <center>
-        <VBox alignment="CENTER" spacing="15">
-            <Label fx:id="songTitleLabel" text="Currently playing: -" styleClass="song-title"/>
-
-            <HBox alignment="CENTER" spacing="10">
-                <Button fx:id="playButton" text="▶ Play" onAction="#handlePlay"/>
-                <Button fx:id="pauseButton" text="❚❚ Pause" onAction="#handlePause"/>
-                <Button fx:id="stopButton" text="■ Stop" onAction="#handleStop"/>
-                <Button fx:id="nextButton" text="⏭ Next" onAction="#handleNext"/>
+        <VBox spacing="10" alignment="TOP_CENTER">
+            <!-- Searchbar i wyniki -->
+            <HBox fx:id="searchBarBox" spacing="10" alignment="CENTER">
+                <Button fx:id="homeButton" text="🏠" onAction="#handleHome"
+                        style="-fx-background-radius: 10; -fx-font-size: 18px;"/>
+                <TextField fx:id="searchField" promptText="Wyszukaj piosenkę..." prefWidth="600"
+                        style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-padding: 5 10 5 10;"/>
+                <Button fx:id="searchButton" text="🔍" onAction="#handleSearch"
+                        style="-fx-background-radius: 10; -fx-padding: 5 15; -fx-font-size: 14px;"/>
             </HBox>
+            <VBox fx:id="searchResultsContainer" spacing="5" alignment="CENTER_LEFT"
+                  prefWidth="600" maxWidth="600"
+                  style="-fx-background-color: #2a2a2a; -fx-padding: 0; -fx-border-color: #444; -fx-border-width: 1; -fx-background-radius: 10;">
+            </VBox>
 
-            <Slider fx:id="progressSlider" min="0" max="100" value="0" prefWidth="300"/>
+            <VBox fx:id="homeBox" alignment="CENTER" spacing="15" visible="false" managed="false" style="-fx-padding: 250 0 0 0;">
+        <Label fx:id="homeSongTitleLabel" text="Currently playing: -" styleClass="song-title"/>
+        <HBox alignment="CENTER" spacing="10">
+            <Button fx:id="homePlayButton" text="▶ Play" onAction="#handleHomePlay"/>
+            <Button fx:id="homePauseButton" text="❚❚ Pause" onAction="#handleHomePause"/>
+            <Button fx:id="homeStopButton" text="■ Stop" onAction="#handleHomeStop"/>
+            <Button fx:id="homeNextButton" text="⏭ Next" onAction="#handleHomeNext"/>
+            <Button fx:id="homeShuffleButton" text="🔀 Shuffle" onAction="#handleHomeShuffle"/>
+        </HBox>
+        <Slider fx:id="homeProgressSlider" min="0" max="100" value="0" prefWidth="600"/>
+    </VBox>
+
+            <VBox fx:id="playlistBox" spacing="15" style="-fx-background-color: #1e1e1e;">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10" />
+                </padding>
+                <Label fx:id="songTitleLabel" text="Currently playing: -" styleClass="song-title"/>
+                <ScrollPane fitToWidth="true" fitToHeight="true" prefHeight="300" style="-fx-background: #121212;">
+                    <VBox fx:id="songsContainer" spacing="5" style="-fx-background-color: #121212; -fx-padding: 10;">
+                        <!-- Tu będą wyświetlane piosenki z playlisty -->
+                    </VBox>
+                </ScrollPane>
+                <HBox alignment="CENTER" spacing="10">
+                    <Button fx:id="playButton" text="▶ Play" onAction="#handlePlay"/>
+                    <Button fx:id="pauseButton" text="❚❚ Pause" onAction="#handlePause"/>
+                    <Button fx:id="stopButton" text="■ Stop" onAction="#handleStop"/>
+                    <Button fx:id="nextButton" text="⏭ Next" onAction="#handleNext"/>
+                    <Button fx:id="shuffleButton" text="🔀 Shuffle" onAction="#handleShuffle"/>
+                </HBox>
+                <Slider fx:id="progressSlider" min="0" max="100" value="0" prefWidth="300"/>
+            </VBox>
         </VBox>
     </center>
 
     <left>
         <VBox spacing="10" prefWidth="200">
-
             <Button fx:id="newPlaylistButton" text="+ New Playlist" onAction="#handleNewPlaylist" />
             <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background: #121212; -fx-background-color: #121212;">
                 <VBox fx:id="playlistContainer" spacing="10" style="-fx-background-color: #121212;">
@@ -49,9 +73,7 @@
                     </padding>
                 </VBox>
             </ScrollPane>
-
         </VBox>
-
     </left>
 
     <padding>

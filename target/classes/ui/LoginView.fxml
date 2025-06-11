@@ -3,10 +3,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="10" alignment="CENTER" xmlns:fx="http://javafx.com/fxml" fx:controller="player.ui.LoginController" style="-fx-padding: 20;">
-    <Label text="Zaloguj się"/>
-    <TextField fx:id="usernameField" promptText="Username"/>
-    <PasswordField fx:id="passwordField" promptText="Password"/>
-    <Button text="Login" onAction="#handleLogin"/>
-</VBox>
-
+<StackPane xmlns:fx="http://javafx.com/fxml" fx:controller="player.ui.LoginController" style="-fx-background-color: #181818;">
+    <VBox spacing="20" alignment="CENTER" maxWidth="350">
+        <Label text="Zaloguj się" styleClass="header"/>
+        <TextField fx:id="usernameField" promptText="user" prefWidth="220"/>
+        <PasswordField fx:id="passwordField" promptText="••••" prefWidth="220"/>
+        <Button text="Login" onAction="#handleLogin" prefWidth="120"/>
+    </VBox>
+</StackPane>

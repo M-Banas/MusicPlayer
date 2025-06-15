@@ -21,4 +21,8 @@ public class Song {
         return artist;
     }
 
+    public String getId() {
+        return id;
+    }
+
 }

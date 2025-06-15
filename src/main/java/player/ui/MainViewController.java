@@ -48,7 +48,7 @@ public class MainViewController {
     private int currentIndex = 0;
     private boolean isSeeking = false;
     private AnimationTimer timer;
-
+    private int userId;
     //Obsługa panelu homeBox
     @FXML private VBox homeBox;
     @FXML private Label homeSongTitleLabel;
@@ -62,30 +62,12 @@ public class MainViewController {
     
     @FXML
     public void initialize() {
+        userId= LoginController.userId;
         songRepository.fetchSongs();
         allSongs = songRepository.loadSongs();
 
         // utwórz domyślną playlistę
-        Playlist defaultPl = new Playlist("Ulubione", new ArrayList<>());
-        playlists.add(defaultPl);
-        currentPlaylist = defaultPl;
-        addPlaylistToSidebar(defaultPl);
-
-// =======
-//     private int User=2;
-//     @FXML
-//     public void initialize() {
-//         List<Playlist> playlists = PlaylistManager.loadPlaylists(User);
-//         if (playlists != null) {
-//             for (var playlist : playlists) {
-//                 System.out.println("Loaded playlist: " + playlist.name);
-//                 addPlaylistToSidebar(playlist.name);
-//             }
-//         }
-//         SongRepository songsRepository = new SongRepository();
-//         System.out.println("Available songs: " + songsRepository.getSongs().size());
-//         playlist = new Playlist("wszystkie",songsRepository.getSongs());
-// >>>>>>> e45809f2d97f1bc25a7f40ad5d4d33c483320d8a
+        refreshPlaylists();
         playlistContainer.setPadding(new Insets(10));
         playlistContainer.setSpacing(10);
         playlistContainer.setStyle("-fx-background-color: #333333; -fx-border-color: #555555; -fx-border-width: 1px;");
@@ -124,6 +106,24 @@ public class MainViewController {
         // Jeśli domyślna playlista ma piosenki, załaduj ją (opcjonalnie)
         if (currentPlaylist != null && !currentPlaylist.getSongs().isEmpty()) {
             player.load(currentPlaylist, 0);
+        }
+    }
+
+    private void refreshPlaylists() {
+        playlists.clear();
+        playlistContainer.getChildren().clear();
+        songsContainer.getChildren().clear();
+        Playlist defaultPl = new Playlist("Ulubione", new ArrayList<>());
+        playlists.add(defaultPl);
+        currentPlaylist = defaultPl;
+        addPlaylistToSidebar(defaultPl);
+
+        if (playlists != null) {
+            for (var playlist : PlaylistManager.loadPlaylists(userId)) {
+                playlists.add(playlist);
+                System.out.println("Loaded playlist: " + playlist.getName());
+                addPlaylistToSidebar(playlist);               
+            }
         }
     }
 
@@ -174,6 +174,7 @@ public class MainViewController {
     private void handleHomeNext() {
         if (!shuffledAllSongs.isEmpty()) {
             homeCurrentIndex = (homeCurrentIndex + 1) % shuffledAllSongs.size();
+            player.stop();
             handleHomePlay();
         }
     }
@@ -277,7 +278,10 @@ public class MainViewController {
             if (!name.trim().isEmpty()) {
                 Playlist newPl = new Playlist(name.trim(), new ArrayList<>());
                 playlists.add(newPl);
+                PlaylistManager.createPlaylist(name.trim(), userId);
+                System.out.println("Created new playlist: " + name);
                 addPlaylistToSidebar(newPl);
+                refreshPlaylists();
             }
         });
     }
@@ -438,6 +442,7 @@ public class MainViewController {
         for (Playlist pl : playlists) {
             if (pl.getName().equals(playlistName)) {
                if (!pl.getSongs().contains(song)) {
+                    PlaylistManager.addSongToPlaylist(pl.getId(), song.getId());
                     pl.getSongs().add(song);
                 }
                 break;

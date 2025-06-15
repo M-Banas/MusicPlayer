@@ -4,6 +4,7 @@ import java.util.List;
 public class Playlist {
     private String name;
     private List<Song> songs;
+    private String id;
 
     public Playlist(String name, List<Song> songs) {
         this.name = name;
@@ -16,5 +17,9 @@ public class Playlist {
         if (!songs.contains(song)) {
             songs.add(song);
         }
+    }
+
+    public String getId() {
+        return id;
     }
 }

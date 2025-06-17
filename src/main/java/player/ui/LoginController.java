@@ -4,9 +4,13 @@ import java.net.HttpURLConnection;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.PasswordField;
@@ -16,7 +20,7 @@ import player.model.Playlist;
 import player.util.HttpUtil;
 
 public class LoginController {
-    public static int userId;
+    public static String userId;
     public static boolean isLoggedIn = false;
 
     @FXML
@@ -58,11 +62,36 @@ public class LoginController {
             return;
         }
         else {
-            userId = Integer.parseInt(response);
+            userId = response;
             System.out.println("Zalogowano jako użytkownik o ID: " + userId);
             isLoggedIn = true;
             Stage stage = (Stage) usernameField.getScene().getWindow();
             stage.close();
+        }
+    }
+
+    @FXML
+    private void handleRegister() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/RegisterView.fxml"));
+            Parent registerRoot = loader.load();
+            Scene registerScene = new Scene(registerRoot);
+            registerScene.getStylesheets().add(getClass().getResource("/ui/style.css").toExternalForm());
+
+            Stage stage = (Stage) usernameField.getScene().getWindow();
+            stage.setScene(registerScene);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Błąd");
+            alert.setHeaderText("Nie można otworzyć formularza rejestracji");
+            alert.setContentText("Spróbuj ponownie później.");
+
+            DialogPane dialogPane = alert.getDialogPane();
+            dialogPane.getStylesheets().add(getClass().getResource("/ui/style.css").toExternalForm());
+            dialogPane.getStyleClass().add("custom-alert");
+
+            alert.showAndWait();
         }
     }
 }

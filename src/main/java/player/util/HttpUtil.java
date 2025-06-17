@@ -25,6 +25,12 @@ public class HttpUtil {
         return connection;
     }
 
+    public static HttpURLConnection getDeleteConnection(String endpoint) throws IOException {
+        URL url = new URL(BACKEND_URL + endpoint);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("DELETE");
+        return connection;
+    }
     public static String readResponse(HttpURLConnection connection) throws IOException {
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(connection.getInputStream()))) {

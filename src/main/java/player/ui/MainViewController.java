@@ -48,7 +48,7 @@ public class MainViewController {
     private int currentIndex = 0;
     private boolean isSeeking = false;
     private AnimationTimer timer;
-    private int userId;
+    private String userId;
     //Obsługa panelu homeBox
     @FXML private VBox homeBox;
     @FXML private Label homeSongTitleLabel;
@@ -311,6 +311,7 @@ public class MainViewController {
     }
 
     private void showPlaylistSongs(Playlist playlist) {
+        refreshPlaylists();
         homeBox.setVisible(false);
         homeBox.setManaged(false);
         playlistBox.setVisible(true);
@@ -332,11 +333,17 @@ public class MainViewController {
                 songTitleLabel.setText("Currently playing: " + song.getTitle());
                 currentIndex = songIndex;
             });
-
+            Button deleteBtn = new Button("DELETE");
+            deleteBtn.setStyle("-fx-background-radius: 5; -fx-background-color: #4db3cf; -fx-text-fill: white;");
+            deleteBtn.setOnAction(e -> {
+                PlaylistManager.removeSongFromPlaylist(playlist.getId(),song.getId());
+                Playlist temp = PlaylistManager.getPlaylist(playlist.getId());
+                showPlaylistSongs(temp);
+            });
             Label songLabel = new Label(song.getTitle() + " - " + song.getArtist());
             songLabel.setStyle("-fx-text-fill: white;");
 
-            songRow.getChildren().addAll(playBtn, songLabel);
+            songRow.getChildren().addAll(playBtn, songLabel,deleteBtn);
             songsContainer.getChildren().add(songRow);
         }
     }

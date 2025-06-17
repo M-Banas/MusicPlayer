@@ -9,5 +9,9 @@
         <TextField fx:id="usernameField" promptText="user" prefWidth="220"/>
         <PasswordField fx:id="passwordField" promptText="••••" prefWidth="220"/>
         <Button text="Login" onAction="#handleLogin" prefWidth="120"/>
+        <HBox spacing="10" alignment="CENTER">
+            <Label text="Nie masz konta?" style="-fx-text-fill: white;"/>
+            <Button text="Zarejestruj się" onAction="#handleRegister" styleClass="link-button"/>
+        </HBox>
     </VBox>
 </StackPane>

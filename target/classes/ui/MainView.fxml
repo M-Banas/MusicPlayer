@@ -27,10 +27,14 @@
                     <Button fx:id="searchButton" text="🔍" onAction="#handleSearch"
                             style="-fx-background-radius: 10; -fx-padding: 5 15; -fx-font-size: 14px;"/>
                 </HBox>
-                <VBox fx:id="searchResultsContainer" spacing="5" alignment="CENTER_LEFT"
-                      prefWidth="600" maxWidth="600"
-                      style="-fx-background-color: #2a2a2a; -fx-padding: 0; -fx-border-color: #444; -fx-border-width: 1; -fx-background-radius: 10;">
-                </VBox>
+                <HBox alignment="CENTER" spacing="0">
+                    <ScrollPane fitToWidth="true" fitToHeight="false" prefHeight="200" maxHeight="200" prefWidth="600" maxWidth="600" style="-fx-background: transparent; -fx-background-color: transparent;">
+                        <VBox fx:id="searchResultsContainer" spacing="5" alignment="CENTER_LEFT"
+                              prefWidth="600" maxWidth="600" maxHeight="200"
+                              style="-fx-background-color: #2a2a2a; -fx-padding: 0; -fx-border-color: #444; -fx-border-width: 1; -fx-background-radius: 10;">
+                        </VBox>
+                    </ScrollPane>
+                </HBox>
 
                 <StackPane>
                     <Pane minHeight="200" minWidth="900">

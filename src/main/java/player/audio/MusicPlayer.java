@@ -6,8 +6,19 @@ import javafx.util.Duration;
 import player.model.Playlist;
 
 public class MusicPlayer {
-
+    private static MusicPlayer instance;
     private MediaPlayer mediaPlayer;
+
+    private MusicPlayer() {
+        // Private constructor to prevent instantiation
+    }
+
+    public static MusicPlayer getInstance() {
+        if (instance == null) {
+            instance = new MusicPlayer();
+        }
+        return instance;
+    }
 
     public void load(Playlist play, int i) {
         if (play == null || play.getSongs() == null || play.getSongs().size() <= i) {
@@ -71,18 +82,53 @@ public class MusicPlayer {
     }
 
     public void playOrResume(Playlist play, int i) {
-        if (mediaPlayer == null) {
-            load(play, i);
-            mediaPlayer.play();
-        } else {
-            MediaPlayer.Status status = mediaPlayer.getStatus();
-            if (status == MediaPlayer.Status.PAUSED || status == MediaPlayer.Status.STOPPED) {
-                mediaPlayer.play();
-            } else if (status == MediaPlayer.Status.READY) {
-                mediaPlayer.play();
-            } else {
-                
+        // Jeśli play lub play.getSongs() są puste, nie rób nic
+        if (play == null || play.getSongs() == null || play.getSongs().isEmpty()) {
+            System.out.println("[BŁĄD] Brak playlisty lub piosenek do odtworzenia.");
+            return;
+        }
+        // Jeśli indeks poza zakresem, ustaw na 0
+        if (i < 0 || i >= play.getSongs().size()) {
+            i = 0;
+        }
+        // Jeśli mediaPlayer nie istnieje lub nie jest załadowany ten utwór, załaduj go
+        boolean needLoad = true;
+        if (mediaPlayer != null) {
+            Media currentMedia = mediaPlayer.getMedia();
+            String currentUrl = currentMedia != null ? currentMedia.getSource() : null;
+            String targetUrl = play.getSongs().get(i).url;
+            if (currentUrl != null && currentUrl.equals(targetUrl)) {
+                needLoad = false;
             }
+        }
+        if (needLoad) {
+            load(play, i);
+            if (mediaPlayer != null) {
+                mediaPlayer.setOnReady(() -> mediaPlayer.play());
+                return;
+            }
+        }
+        if (mediaPlayer == null) {
+            System.out.println("[BŁĄD] MediaPlayer nie został utworzony (null) – sprawdź playlistę i indeks.");
+            return;
+        }
+        MediaPlayer.Status status = mediaPlayer.getStatus();
+        if (status == MediaPlayer.Status.UNKNOWN) {
+            System.out.println("[BŁĄD] MediaPlayer status UNKNOWN – problem z linkiem lub formatem pliku.");
+            return;
+        }
+        if (status == MediaPlayer.Status.DISPOSED) {
+            System.out.println("[BŁĄD] MediaPlayer status DISPOSED – obiekt został zniszczony, nie można odtworzyć.");
+            return;
+        }
+        if (status == MediaPlayer.Status.PAUSED || status == MediaPlayer.Status.STOPPED) {
+            mediaPlayer.play();
+        } else if (status == MediaPlayer.Status.READY) {
+            mediaPlayer.play();
+        } else if (status == MediaPlayer.Status.PLAYING) {
+            System.out.println("[INFO] Utwór już jest odtwarzany.");
+        } else {
+            System.out.println("[BŁĄD] Nieobsługiwany status MediaPlayer: " + status);
         }
     }
     

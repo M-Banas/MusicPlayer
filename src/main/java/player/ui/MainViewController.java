@@ -9,12 +9,17 @@ import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceDialog;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.image.Image;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -33,10 +38,21 @@ public class MainViewController {
     @FXML private javafx.scene.control.TextField searchField;
     @FXML private Button searchButton;
     @FXML private Button newPlaylistButton;
-    @FXML private VBox searchResultsContainer; // Dodaj do pliku FXML <VBox fx:id="searchResultsContainer">
+    @FXML private VBox searchResultsContainer; 
     @FXML private VBox playlistContainer;
     @FXML private VBox songsContainer; 
     @FXML private VBox playlistBox;
+    @FXML private Button profileButton;
+    @FXML private VBox centerVBox;
+    @FXML private Node previousCenterContent;
+    @FXML private VBox profileBox;
+    @FXML private AnchorPane profileOverlay; 
+    @FXML private Label profileUsernameLabel;
+    // @FXML private AnchorPane changePasswordDialog;
+    // @FXML private PasswordField oldPasswordField;
+    // @FXML private PasswordField newPasswordField;
+    // @FXML private PasswordField confirmPasswordField;
+    // @FXML private Label passwordErrorLabel;
 
     private List<Song> allSongs; // wszystkie piosenki z repozytorium
     private List<Playlist> playlists = new ArrayList<>();
@@ -49,16 +65,6 @@ public class MainViewController {
     private boolean isSeeking = false;
     private AnimationTimer timer;
     private String userId;
-    //Obsługa panelu homeBox
-    @FXML private VBox homeBox;
-    @FXML private Label homeSongTitleLabel;
-    @FXML private Button homePlayButton, homePauseButton, homeStopButton, homeNextButton, homeShuffleButton;
-    @FXML private Slider homeProgressSlider;
-
-    private List<Song> shuffledAllSongs = new ArrayList<>();
-    private int homeCurrentIndex = 0;
-    private boolean homeIsSeeking = false;
-    private AnimationTimer homeTimer;
     
     @FXML
     public void initialize() {
@@ -88,9 +94,6 @@ public class MainViewController {
             player.seekTo(seekPos);
         });
 
-        // Obsługa slidera postępu home
-        setupHomeSlider();
-
         // Obsługa końca utworu
         player.setRate(1.0);
         player.setOnEndOfMedia(() -> handleNext());
@@ -107,6 +110,7 @@ public class MainViewController {
         if (currentPlaylist != null && !currentPlaylist.getSongs().isEmpty()) {
             player.load(currentPlaylist, 0);
         }
+        profileButton.setOnAction(e -> showProfile());
     }
 
     private void refreshPlaylists() {
@@ -130,96 +134,96 @@ public class MainViewController {
     private void showHomeView() {
         playlistBox.setVisible(false);
         playlistBox.setManaged(false);
-        homeBox.setVisible(true);
-        homeBox.setManaged(true);
+        //homeBox.setVisible(true);
+        //homeBox.setManaged(true);
 
         // Przygotuj losową kolejność wszystkich piosenek
-        shuffledAllSongs = new ArrayList<>(allSongs);
-        Collections.shuffle(shuffledAllSongs);
-        homeCurrentIndex = 0;
-        homeSongTitleLabel.setText("Currently playing: -"); 
+        //shuffledAllSongs = new ArrayList<>(allSongs);
+        //Collections.shuffle(shuffledAllSongs);
+        //homeCurrentIndex = 0;
+        //homeSongTitleLabel.setText("Currently playing: -"); 
         //updateHomeSongTitle();
-        homeProgressSlider.setValue(0);
+        //homeProgressSlider.setValue(0);
     }
 
-    private void playSingleSong(Song song) {
-        // Tworzymy tymczasową playlistę z jedną piosenką
-        Playlist tempPlaylist = new Playlist("Losowa", List.of(song));
-        player.load(tempPlaylist, 0);
-        player.play();
-    }
+    // private void playSingleSong(Song song) {
+    //     // Tworzymy tymczasową playlistę z jedną piosenką
+    //     Playlist tempPlaylist = new Playlist("Losowa", List.of(song));
+    //     player.load(tempPlaylist, 0);
+    //     player.play();
+    // }
 
-    @FXML
-    private void handleHomePlay() {
-        if (!shuffledAllSongs.isEmpty()) {
-            Song song = shuffledAllSongs.get(homeCurrentIndex);
-            playSingleSong(song);
-            updateHomeSongTitle();
-            startHomeTimer();
-        }
-    }
+    // @FXML
+    // private void handleHomePlay() {
+    //     if (!shuffledAllSongs.isEmpty()) {
+    //         Song song = shuffledAllSongs.get(homeCurrentIndex);
+    //         playSingleSong(song);
+    //         updateHomeSongTitle();
+    //         startHomeTimer();
+    //     }
+    // }
 
-    @FXML
-    private void handleHomePause() {
-        player.pause();
-    }   
+    // @FXML
+    // private void handleHomePause() {
+    //     player.pause();
+    // }   
 
-    @FXML
-    private void handleHomeStop() {
-        player.stop();
-        homeProgressSlider.setValue(0);
-    }
+    // @FXML
+    // private void handleHomeStop() {
+    //     player.stop();
+    //     homeProgressSlider.setValue(0);
+    // }
 
-    @FXML
-    private void handleHomeNext() {
-        if (!shuffledAllSongs.isEmpty()) {
-            homeCurrentIndex = (homeCurrentIndex + 1) % shuffledAllSongs.size();
-            player.stop();
-            handleHomePlay();
-        }
-    }
+    // @FXML
+    // private void handleHomeNext() {
+    //     if (!shuffledAllSongs.isEmpty()) {
+    //         homeCurrentIndex = (homeCurrentIndex + 1) % shuffledAllSongs.size();
+    //         player.stop();
+    //         handleHomePlay();
+    //     }
+    // }
 
-    @FXML
-    private void handleHomeShuffle() {
-        Collections.shuffle(shuffledAllSongs);
-        homeCurrentIndex = 0;
-        handleHomePlay();
-    }
+    // @FXML
+    // private void handleHomeShuffle() {
+    //     Collections.shuffle(shuffledAllSongs);
+    //     homeCurrentIndex = 0;
+    //     handleHomePlay();
+    // }
 
-    private void updateHomeSongTitle() {
-        if (!shuffledAllSongs.isEmpty()) {
-            homeSongTitleLabel.setText("Currently playing: " + shuffledAllSongs.get(homeCurrentIndex).getTitle());
-        } else {
-            homeSongTitleLabel.setText("Currently playing: -");
-        }
-    }
+    // private void updateHomeSongTitle() {
+    //     if (!shuffledAllSongs.isEmpty()) {
+    //         homeSongTitleLabel.setText("Currently playing: " + shuffledAllSongs.get(homeCurrentIndex).getTitle());
+    //     } else {
+    //         homeSongTitleLabel.setText("Currently playing: -");
+    //     }
+    // }
 
-    private void setupHomeSlider() {
-        homeProgressSlider.setOnMousePressed(e -> homeIsSeeking = true);
-        homeProgressSlider.setOnMouseReleased(e -> {
-            homeIsSeeking = false;
-            int seekPos = (int) ((homeProgressSlider.getValue() / 100) * player.getDuration());
-            player.seekTo(seekPos);
-        });
-    }
+    // private void setupHomeSlider() {
+    //     homeProgressSlider.setOnMousePressed(e -> homeIsSeeking = true);
+    //     homeProgressSlider.setOnMouseReleased(e -> {
+    //         homeIsSeeking = false;
+    //         int seekPos = (int) ((homeProgressSlider.getValue() / 100) * player.getDuration());
+    //         player.seekTo(seekPos);
+    //     });
+    // }
 
-    private void startHomeTimer() {
-        if (homeTimer != null) homeTimer.stop();
-        homeTimer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                if (!homeIsSeeking && player.isPlaying()) {
-                    int currentPos = player.getCurrentPosition();
-                    int duration = player.getDuration();
-                    if (duration > 0) {
-                        double percent = (currentPos * 100.0) / duration;
-                        homeProgressSlider.setValue(percent);
-                    }
-                }
-            }
-        };
-        homeTimer.start();
-    }
+    // private void startHomeTimer() {
+    //     if (homeTimer != null) homeTimer.stop();
+    //     homeTimer = new AnimationTimer() {
+    //         @Override
+    //         public void handle(long now) {
+    //             if (!homeIsSeeking && player.isPlaying()) {
+    //                 int currentPos = player.getCurrentPosition();
+    //                 int duration = player.getDuration();
+    //                 if (duration > 0) {
+    //                     double percent = (currentPos * 100.0) / duration;
+    //                     homeProgressSlider.setValue(percent);
+    //                 }
+    //             }
+    //         }
+    //     };
+    //     homeTimer.start();
+    // }
 
     @FXML
     private void handlePlay() {
@@ -312,8 +316,8 @@ public class MainViewController {
 
     private void showPlaylistSongs(Playlist playlist) {
         refreshPlaylists();
-        homeBox.setVisible(false);
-        homeBox.setManaged(false);
+        //homeBox.setVisible(false);
+        //homeBox.setManaged(false);
         playlistBox.setVisible(true);
         playlistBox.setManaged(true);
         songsContainer.getChildren().clear();
@@ -479,24 +483,151 @@ public class MainViewController {
         currentPlaylist = null;
     }
 
-    private void showPlaylistChoiceDialog(String songName) {
-        List<String> playlistNames = playlists.stream()
-                                              .map(Playlist::getName)
-                                              .collect(Collectors.toList());
+    // private void showPlaylistChoiceDialog(String songName) {
+    //     List<String> playlistNames = playlists.stream()
+    //                                           .map(Playlist::getName)
+    //                                           .collect(Collectors.toList());
 
-        ChoiceDialog<String> dialog = new ChoiceDialog<>(playlistNames.isEmpty() ? null : playlistNames.get(0), playlistNames);
-        dialog.setTitle("Wybierz playlistę");
-        dialog.setHeaderText("Dodaj \"" + songName + "\" do playlisty");
-        dialog.setContentText("Wybierz playlistę:");
+    //     ChoiceDialog<String> dialog = new ChoiceDialog<>(playlistNames.isEmpty() ? null : playlistNames.get(0), playlistNames);
+    //     dialog.setTitle("Wybierz playlistę");
+    //     dialog.setHeaderText("Dodaj \"" + songName + "\" do playlisty");
+    //     dialog.setContentText("Wybierz playlistę:");
 
-        dialog.showAndWait().ifPresent(selectedPlaylistName -> {
-            for (Song song : allSongs) {
-                if (song.getTitle().equals(songName)) {
-                    addSongToPlaylist(song, selectedPlaylistName);
-                    break;
-                }
-            }
-        });
+    //     dialog.showAndWait().ifPresent(selectedPlaylistName -> {
+    //         for (Song song : allSongs) {
+    //             if (song.getTitle().equals(songName)) {
+    //                 addSongToPlaylist(song, selectedPlaylistName);
+    //                 break;
+    //             }
+    //         }
+    //     });
+    // }
+
+private void showProfile() {
+    profileOverlay.getChildren().clear();
+    profileOverlay.setVisible(true);
+    profileOverlay.setManaged(true);
+
+    VBox sidebar = new VBox(30);
+    sidebar.setStyle("-fx-background-color: #1e1e1e; -fx-padding: 40 30 40 30; -fx-min-width: 350; -fx-max-width: 350; -fx-pref-height: 100vh;");
+    sidebar.setAlignment(Pos.TOP_LEFT);
+
+    // Przycisk ze strzałką
+    Button backBtn = new Button();
+    ImageView backArrow = new ImageView(new Image(getClass().getResourceAsStream("/ui/arrow-blue.png")));
+    backArrow.setFitWidth(40);
+    backArrow.setFitHeight(24);
+    backArrow.setRotate(180);
+    backBtn.setGraphic(backArrow);
+    backBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand;");
+    backBtn.setOnAction(e -> {
+        profileOverlay.setVisible(false);
+        profileOverlay.setManaged(false);
+    });
+
+    // Username
+    Label userLabel = new Label("Username: " + getCurrentUsername());
+    userLabel.setStyle("-fx-text-fill: #4db3cf; -fx-font-size: 22px;");
+
+    // Password (kropki)
+    String password = LoginController.password != null ? LoginController.password : "";
+    String dots = password.isEmpty() ? "No password" : "•".repeat(password.length());
+    Label passwordTextLabel = new Label("Password:");
+    passwordTextLabel.setStyle("-fx-text-fill: #4db3cf; -fx-font-size: 18px;");
+    Label passwordDotsLabel = new Label(dots);
+    passwordDotsLabel.setStyle("-fx-text-fill: #4db3cf; -fx-font-size: 18px;");
+
+    sidebar.getChildren().addAll(backBtn, userLabel, passwordTextLabel, passwordDotsLabel);
+
+    profileOverlay.getChildren().add(sidebar);
+    AnchorPane.setRightAnchor(sidebar, 0.0);
+    AnchorPane.setTopAnchor(sidebar, 65.0);
+    AnchorPane.setBottomAnchor(sidebar, 0.0);
+}
+
+private BorderPane createProfilePane() {
+    BorderPane profilePane = new BorderPane();
+    profilePane.setStyle("-fx-background-color: #1e1e1e; -fx-padding: 40;");
+
+    // Strzałka powrotu
+    ImageView backArrow = new ImageView(new Image(getClass().getResourceAsStream("/ui/arrow-blue.png")));
+    backArrow.setFitWidth(40);
+    backArrow.setFitHeight(24);
+    backArrow.setRotate(180);
+    backArrow.setOnMouseClicked(e -> {
+        centerVBox.getChildren().clear();
+        if (previousCenterContent != null) {
+            centerVBox.getChildren().add(previousCenterContent);
+        }
+    });
+
+    HBox topBox = new HBox(backArrow);
+    topBox.setAlignment(Pos.TOP_LEFT);
+
+    VBox centerBox = new VBox(20);
+    centerBox.setAlignment(Pos.CENTER);
+
+    Label userLabel = new Label("Username: " + getCurrentUsername());
+    userLabel.setStyle("-fx-text-fill: #4db3cf; -fx-font-size: 22px;");
+
+    // Dodaj etykietę z hasłem jako kropki
+    String password = LoginController.password != null ? LoginController.password : "";
+    String dots = "•".repeat(password.length());
+    Label passwordLabel = new Label("password: " + dots);
+    passwordLabel.setStyle("-fx-text-fill: #4db3cf; -fx-font-size: 18px;");
+
+    centerBox.getChildren().addAll(userLabel, passwordLabel);
+
+    profilePane.setTop(topBox);
+    profilePane.setCenter(centerBox);
+
+    return profilePane;
+}
+    // private void showProfile() {
+    //     if (previousCenterContent == null && !centerVBox.getChildren().isEmpty()) {
+    //         previousCenterContent = centerVBox.getChildren().get(0);
+    //     }
+    //     centerVBox.getChildren().clear();
+
+    //     BorderPane profilePane = new BorderPane();
+    //     profilePane.setStyle("-fx-background-color: #1e1e1e; -fx-padding: 40;");
+
+    //     // Strzałka powrotu
+    //     ImageView backArrow = new ImageView(new Image(getClass().getResourceAsStream("/ui/arrow-blue.png")));
+    //     backArrow.setFitWidth(40);
+    //     backArrow.setFitHeight(24);
+    //     backArrow.setRotate(180); // grot w lewo
+    //     backArrow.setOnMouseClicked(e -> {
+    //         centerVBox.getChildren().clear();
+    //         if (previousCenterContent != null) {
+    //             centerVBox.getChildren().add(previousCenterContent);
+    //         }
+    //     });
+
+    //     HBox topBox = new HBox(backArrow);
+    //     topBox.setAlignment(Pos.TOP_LEFT);
+
+    //     // Środek: Username i przycisk
+    //     VBox centerBox = new VBox(20);
+    //     centerBox.setAlignment(Pos.CENTER);
+
+    //     Label userLabel = new Label("Username: " + getCurrentUsername());
+    //     userLabel.setStyle("-fx-text-fill: #4db3cf; -fx-font-size: 22px;");
+
+    //     Button changePasswordBtn = new Button("Change password");
+    //     changePasswordBtn.setStyle("-fx-background-radius: 10; -fx-font-size: 16px; -fx-padding: 8 24;");
+    //     changePasswordBtn.setOnAction(e -> handleChangePassword());
+
+    //     centerBox.getChildren().addAll(userLabel, changePasswordBtn);
+
+    //     profilePane.setTop(topBox);
+    //     profilePane.setCenter(centerBox);
+
+    //     centerVBox.getChildren().add(profilePane);
+    // }
+
+    private String getCurrentUsername() {
+        return LoginController.username != null ? LoginController.username : "Unknown";
     }
 
 }

@@ -1,11 +1,11 @@
 package player.ui;
 
 import java.net.HttpURLConnection;
-import java.util.List;
+//import java.util.List;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
+//import com.google.gson.Gson;
+//import com.google.gson.JsonObject;
+//import com.google.gson.reflect.TypeToken;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,11 +16,12 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import player.model.Playlist;
 import player.util.HttpUtil;
 
 public class LoginController {
     public static String userId;
+    public static String username;
+    public static String password;
     public static boolean isLoggedIn = false;
 
     @FXML
@@ -63,6 +64,7 @@ public class LoginController {
         }
         else {
             userId = response;
+            username = user;
             System.out.println("Zalogowano jako użytkownik o ID: " + userId);
             isLoggedIn = true;
             Stage stage = (Stage) usernameField.getScene().getWindow();

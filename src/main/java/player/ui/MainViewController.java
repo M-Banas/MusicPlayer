@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import org.controlsfx.control.CheckComboBox;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -12,6 +12,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -48,11 +49,7 @@ public class MainViewController {
     @FXML private VBox profileBox;
     @FXML private AnchorPane profileOverlay; 
     @FXML private Label profileUsernameLabel;
-    // @FXML private AnchorPane changePasswordDialog;
-    // @FXML private PasswordField oldPasswordField;
-    // @FXML private PasswordField newPasswordField;
-    // @FXML private PasswordField confirmPasswordField;
-    // @FXML private Label passwordErrorLabel;
+    @FXML private ScrollPane searchResultsScrollPane;
 
     private List<Song> allSongs; // wszystkie piosenki z repozytorium
     private List<Playlist> playlists = new ArrayList<>();
@@ -111,6 +108,8 @@ public class MainViewController {
             player.load(currentPlaylist, 0);
         }
         profileButton.setOnAction(e -> showProfile());
+
+        
     }
 
     private void refreshPlaylists() {
@@ -145,85 +144,6 @@ public class MainViewController {
         //updateHomeSongTitle();
         //homeProgressSlider.setValue(0);
     }
-
-    // private void playSingleSong(Song song) {
-    //     // Tworzymy tymczasową playlistę z jedną piosenką
-    //     Playlist tempPlaylist = new Playlist("Losowa", List.of(song));
-    //     player.load(tempPlaylist, 0);
-    //     player.play();
-    // }
-
-    // @FXML
-    // private void handleHomePlay() {
-    //     if (!shuffledAllSongs.isEmpty()) {
-    //         Song song = shuffledAllSongs.get(homeCurrentIndex);
-    //         playSingleSong(song);
-    //         updateHomeSongTitle();
-    //         startHomeTimer();
-    //     }
-    // }
-
-    // @FXML
-    // private void handleHomePause() {
-    //     player.pause();
-    // }   
-
-    // @FXML
-    // private void handleHomeStop() {
-    //     player.stop();
-    //     homeProgressSlider.setValue(0);
-    // }
-
-    // @FXML
-    // private void handleHomeNext() {
-    //     if (!shuffledAllSongs.isEmpty()) {
-    //         homeCurrentIndex = (homeCurrentIndex + 1) % shuffledAllSongs.size();
-    //         player.stop();
-    //         handleHomePlay();
-    //     }
-    // }
-
-    // @FXML
-    // private void handleHomeShuffle() {
-    //     Collections.shuffle(shuffledAllSongs);
-    //     homeCurrentIndex = 0;
-    //     handleHomePlay();
-    // }
-
-    // private void updateHomeSongTitle() {
-    //     if (!shuffledAllSongs.isEmpty()) {
-    //         homeSongTitleLabel.setText("Currently playing: " + shuffledAllSongs.get(homeCurrentIndex).getTitle());
-    //     } else {
-    //         homeSongTitleLabel.setText("Currently playing: -");
-    //     }
-    // }
-
-    // private void setupHomeSlider() {
-    //     homeProgressSlider.setOnMousePressed(e -> homeIsSeeking = true);
-    //     homeProgressSlider.setOnMouseReleased(e -> {
-    //         homeIsSeeking = false;
-    //         int seekPos = (int) ((homeProgressSlider.getValue() / 100) * player.getDuration());
-    //         player.seekTo(seekPos);
-    //     });
-    // }
-
-    // private void startHomeTimer() {
-    //     if (homeTimer != null) homeTimer.stop();
-    //     homeTimer = new AnimationTimer() {
-    //         @Override
-    //         public void handle(long now) {
-    //             if (!homeIsSeeking && player.isPlaying()) {
-    //                 int currentPos = player.getCurrentPosition();
-    //                 int duration = player.getDuration();
-    //                 if (duration > 0) {
-    //                     double percent = (currentPos * 100.0) / duration;
-    //                     homeProgressSlider.setValue(percent);
-    //                 }
-    //             }
-    //         }
-    //     };
-    //     homeTimer.start();
-    // }
 
     @FXML
     private void handlePlay() {
@@ -365,85 +285,86 @@ public class MainViewController {
     }
 
     private void filterSongs(String query) {
-        String lowerCaseQuery = query.toLowerCase();
-        searchResultsContainer.getChildren().clear();
+    String lowerCaseQuery = query.toLowerCase();
+    searchResultsContainer.getChildren().clear();
 
-        if (lowerCaseQuery.isEmpty()) {
-            searchResultsContainer.setVisible(false);
-            return;
-        }
-        searchResultsContainer.setVisible(true);
-
-        for (Song song : allSongs) {
-            if (song.title.toLowerCase().contains(lowerCaseQuery) || song.artist.toLowerCase().contains(lowerCaseQuery)) {
-                HBox songBox = new HBox();
-                songBox.setSpacing(10);
-                songBox.setAlignment(Pos.CENTER_LEFT);
-                songBox.setPadding(new Insets(5));
-                songBox.setStyle("-fx-background-color: #2a2a2a; -fx-background-radius: 8;");
-
-                Button playButton = new Button("🔊");
-                playButton.setStyle("-fx-background-color: #4db3cf; -fx-text-fill: white; -fx-background-radius: 5;");
-                playButton.setOnAction(e -> playSong(song));
-
-                Label songLabel = new Label(song.getTitle() + " - " + song.getArtist());
-                songLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
-                HBox.setHgrow(songLabel, Priority.ALWAYS);
-
-                ComboBox<String> playlistComboBox = new ComboBox<>();
-                playlistComboBox.getItems().addAll(getAllPlaylistNames());
-                playlistComboBox.setPromptText("➕ Do playlisty");
-                playlistComboBox.setStyle("-fx-background-radius: 5; -fx-background-color: #4db34d; -fx-text-fill: white;");
-                playlistComboBox.setOnAction(e -> {
-                String selectedPlaylist = playlistComboBox.getValue();
-                if (selectedPlaylist != null) {
-                    addSongToPlaylist(song, selectedPlaylist);
-                    }
-                });
-
-                songBox.getChildren().addAll(playButton, songLabel, playlistComboBox);
-                searchResultsContainer.getChildren().add(songBox);
-            }
-        }
+    if (lowerCaseQuery.isEmpty()) {
+        searchResultsContainer.setVisible(false);
+        return;
     }
+    searchResultsContainer.setVisible(true);
 
-    private void updateSearchResults(List<Song> foundSongs) {
-        searchResultsContainer.getChildren().clear();
-
-        for (Song song : foundSongs) {
+    for (Song song : allSongs) {
+        if (song.title.toLowerCase().contains(lowerCaseQuery) || song.artist.toLowerCase().contains(lowerCaseQuery)) {
             HBox songBox = new HBox();
             songBox.setSpacing(10);
             songBox.setAlignment(Pos.CENTER_LEFT);
             songBox.setPadding(new Insets(5));
             songBox.setStyle("-fx-background-color: #2a2a2a; -fx-background-radius: 8;");
 
-            // Przycisk odsłuchania
             Button playButton = new Button("🔊");
             playButton.setStyle("-fx-background-color: #4db3cf; -fx-text-fill: white; -fx-background-radius: 5;");
             playButton.setOnAction(e -> playSong(song));
 
-            // Etykieta z tytułem piosenki
-            Label songLabel = new Label(song.getTitle());
+            Label songLabel = new Label(song.getTitle() + " - " + song.getArtist());
             songLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
             HBox.setHgrow(songLabel, Priority.ALWAYS);
 
-            // ComboBox z listą playlist
-            ComboBox<String> playlistComboBox = new ComboBox<>();
-            playlistComboBox.getItems().addAll(getAllPlaylistNames()); // zakładamy że masz taką metodę
-            playlistComboBox.setPromptText("➕ Do playlisty");
-            playlistComboBox.setStyle("-fx-background-radius: 5; -fx-background-color: #4db34d; -fx-text-fill: white;");
+            // MULTISELECT: CheckComboBox z ControlsFX
+            CheckComboBox<String> playlistCheckComboBox = new CheckComboBox<>();
+            playlistCheckComboBox.getItems().addAll(getAllPlaylistNames());
+            playlistCheckComboBox.setTitle("Dodaj do playlisty");
 
-            playlistComboBox.setOnAction(e -> {
-                String selectedPlaylist = playlistComboBox.getValue();
-                if (selectedPlaylist != null) {
-                    addSongToPlaylist(song, selectedPlaylist);
+            Button addBtn = new Button("Dodaj");
+            addBtn.setStyle("-fx-background-radius: 5; -fx-background-color: #4db34d; -fx-text-fill: white;");
+            addBtn.setOnAction(ev -> {
+                for (String playlistName : playlistCheckComboBox.getCheckModel().getCheckedItems()) {
+                    addSongToPlaylist(song, playlistName);
                 }
             });
 
-            songBox.getChildren().addAll(playButton, songLabel, playlistComboBox);
+            songBox.getChildren().addAll(playButton, songLabel, playlistCheckComboBox, addBtn);
             searchResultsContainer.getChildren().add(songBox);
         }
     }
+}
+
+    private void updateSearchResults(List<Song> foundSongs) {
+    searchResultsContainer.getChildren().clear();
+
+    for (Song song : foundSongs) {
+        HBox songBox = new HBox();
+        songBox.setSpacing(10);
+        songBox.setAlignment(Pos.CENTER_LEFT);
+        songBox.setPadding(new Insets(5));
+        songBox.setStyle("-fx-background-color: #2a2a2a; -fx-background-radius: 8;");
+
+        Button playButton = new Button("🔊");
+        playButton.setStyle("-fx-background-color: #4db3cf; -fx-text-fill: white; -fx-background-radius: 5;");
+        playButton.setOnAction(e -> playSong(song));
+
+        Label songLabel = new Label(song.getTitle());
+        songLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
+        HBox.setHgrow(songLabel, Priority.ALWAYS);
+
+        // MULTISELECT: CheckComboBox z ControlsFX
+        CheckComboBox<String> playlistCheckComboBox = new CheckComboBox<>();
+        playlistCheckComboBox.getItems().addAll(getAllPlaylistNames());
+        playlistCheckComboBox.setTitle("Dodaj do playlisty");
+
+        // Przycisk do zatwierdzenia wyboru
+        Button addBtn = new Button("Dodaj");
+        addBtn.setStyle("-fx-background-radius: 5; -fx-background-color: #4db34d; -fx-text-fill: white;");
+        addBtn.setOnAction(ev -> {
+            for (String playlistName : playlistCheckComboBox.getCheckModel().getCheckedItems()) {
+                addSongToPlaylist(song, playlistName);
+            }
+        });
+
+        songBox.getChildren().addAll(playButton, songLabel, playlistCheckComboBox, addBtn);
+        searchResultsContainer.getChildren().add(songBox);
+    }
+}
 
     private List<String> getAllPlaylistNames() {
         return playlists.stream().map(Playlist::getName).collect(Collectors.toList());
@@ -482,26 +403,6 @@ public class MainViewController {
         songTitleLabel.setText("Currently playing: -");
         currentPlaylist = null;
     }
-
-    // private void showPlaylistChoiceDialog(String songName) {
-    //     List<String> playlistNames = playlists.stream()
-    //                                           .map(Playlist::getName)
-    //                                           .collect(Collectors.toList());
-
-    //     ChoiceDialog<String> dialog = new ChoiceDialog<>(playlistNames.isEmpty() ? null : playlistNames.get(0), playlistNames);
-    //     dialog.setTitle("Wybierz playlistę");
-    //     dialog.setHeaderText("Dodaj \"" + songName + "\" do playlisty");
-    //     dialog.setContentText("Wybierz playlistę:");
-
-    //     dialog.showAndWait().ifPresent(selectedPlaylistName -> {
-    //         for (Song song : allSongs) {
-    //             if (song.getTitle().equals(songName)) {
-    //                 addSongToPlaylist(song, selectedPlaylistName);
-    //                 break;
-    //             }
-    //         }
-    //     });
-    // }
 
 private void showProfile() {
     profileOverlay.getChildren().clear();
@@ -583,48 +484,6 @@ private BorderPane createProfilePane() {
 
     return profilePane;
 }
-    // private void showProfile() {
-    //     if (previousCenterContent == null && !centerVBox.getChildren().isEmpty()) {
-    //         previousCenterContent = centerVBox.getChildren().get(0);
-    //     }
-    //     centerVBox.getChildren().clear();
-
-    //     BorderPane profilePane = new BorderPane();
-    //     profilePane.setStyle("-fx-background-color: #1e1e1e; -fx-padding: 40;");
-
-    //     // Strzałka powrotu
-    //     ImageView backArrow = new ImageView(new Image(getClass().getResourceAsStream("/ui/arrow-blue.png")));
-    //     backArrow.setFitWidth(40);
-    //     backArrow.setFitHeight(24);
-    //     backArrow.setRotate(180); // grot w lewo
-    //     backArrow.setOnMouseClicked(e -> {
-    //         centerVBox.getChildren().clear();
-    //         if (previousCenterContent != null) {
-    //             centerVBox.getChildren().add(previousCenterContent);
-    //         }
-    //     });
-
-    //     HBox topBox = new HBox(backArrow);
-    //     topBox.setAlignment(Pos.TOP_LEFT);
-
-    //     // Środek: Username i przycisk
-    //     VBox centerBox = new VBox(20);
-    //     centerBox.setAlignment(Pos.CENTER);
-
-    //     Label userLabel = new Label("Username: " + getCurrentUsername());
-    //     userLabel.setStyle("-fx-text-fill: #4db3cf; -fx-font-size: 22px;");
-
-    //     Button changePasswordBtn = new Button("Change password");
-    //     changePasswordBtn.setStyle("-fx-background-radius: 10; -fx-font-size: 16px; -fx-padding: 8 24;");
-    //     changePasswordBtn.setOnAction(e -> handleChangePassword());
-
-    //     centerBox.getChildren().addAll(userLabel, changePasswordBtn);
-
-    //     profilePane.setTop(topBox);
-    //     profilePane.setCenter(centerBox);
-
-    //     centerVBox.getChildren().add(profilePane);
-    // }
 
     private String getCurrentUsername() {
         return LoginController.username != null ? LoginController.username : "Unknown";

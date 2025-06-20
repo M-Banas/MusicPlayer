@@ -3,8 +3,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane xmlns:fx="http://javafx.com/fxml" fx:controller="player.ui.RegisterController" style="-fx-background-color: #181818;" prefWidth="10000" prefHeight="10000">
-    <VBox spacing="20" alignment="CENTER" maxWidth="10000" maxHeight="10000" prefWidth="10000" prefHeight="10000">
+<StackPane xmlns:fx="http://javafx.com/fxml" fx:controller="player.ui.RegisterController" style="-fx-background-color: #181818;" prefWidth="420" prefHeight="480">
+    <VBox spacing="20" alignment="CENTER" maxWidth="400" maxHeight="440" prefWidth="400" prefHeight="440">
         <Label text="Rejestracja" styleClass="header"/>
         <TextField fx:id="usernameField" promptText="Nazwa użytkownika" prefWidth="300" maxWidth="300"/>
         <PasswordField fx:id="passwordField" promptText="Hasło" prefWidth="300" maxWidth="300"/>

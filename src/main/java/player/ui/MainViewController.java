@@ -13,9 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
@@ -102,9 +100,12 @@ public class MainViewController {
         // Ukrywanie podpowiedzi po utracie fokusu
         searchField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
             if (!isNowFocused) {
-                searchResultsContainer.setVisible(false);
-                searchResultsContainer.setManaged(false);
-                hideParentScrollPane(searchResultsContainer);
+                // Sprawdź, czy focus jest w searchResultsContainer lub jego dzieciach
+                if (!isDescendantFocused(searchResultsContainer)) {
+                    searchResultsContainer.setVisible(false);
+                    searchResultsContainer.setManaged(false);
+                    hideParentScrollPane(searchResultsContainer);
+                }
             }
         });
         // Pokazuj i zarządzaj widocznością przy wpisywaniu
@@ -132,10 +133,11 @@ public class MainViewController {
         playlists.clear();
         playlistContainer.getChildren().clear();
         songsContainer.getChildren().clear();
-        Playlist defaultPl = new Playlist("Ulubione", new ArrayList<>());
-        playlists.add(defaultPl);
-        currentPlaylist = defaultPl;
-        addPlaylistToSidebar(defaultPl);
+        // Usunięto domyślną playlistę "Ulubione"
+        // Playlist defaultPl = new Playlist("Ulubione", new ArrayList<>());
+        // playlists.add(defaultPl);
+        // currentPlaylist = defaultPl;
+        // addPlaylistToSidebar(defaultPl);
 
         if (playlists != null) {
             for (var playlist : PlaylistManager.loadPlaylists(userId)) {
@@ -220,17 +222,50 @@ public class MainViewController {
     private void handleNewPlaylist() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("New Playlist");
-        dialog.setHeaderText("Create a new playlist");
-        dialog.setContentText("Enter playlist name:");
+        dialog.setHeaderText(null);
+        dialog.setContentText("enter playlist name:");
+        
+
+        // Styl okienka
+        var pane = dialog.getDialogPane();
+        pane.setStyle("-fx-background-color: #232323; -fx-border-color: #4db3cf; -fx-border-width: 2px; -fx-background-radius: 10; -fx-border-radius: 10;");
+        // Dodaj klasę CSS wymuszającą biały prompt text
+        pane.getStyleClass().add("white-prompt");
+        // Jawnie załaduj style.css do dialogu (wymusza styl na Linuksie)
+        pane.getStylesheets().add(getClass().getResource("/ui/style.css").toExternalForm());
+
+        dialog.getDialogPane().getButtonTypes().forEach(type -> {
+            Node btn = dialog.getDialogPane().lookupButton(type);
+            if (btn != null) {
+                if (type.getButtonData().isDefaultButton()) {
+                    btn.setStyle("-fx-background-color: #4db3cf; -fx-text-fill: white; -fx-background-radius: 8;");
+                } else {
+                    btn.setStyle("-fx-background-color: #444; -fx-text-fill: #fff; -fx-background-radius: 8;");
+                }
+            }
+        });
 
         dialog.showAndWait().ifPresent(name -> {
-            if (!name.trim().isEmpty()) {
-                Playlist newPl = new Playlist(name.trim(), new ArrayList<>());
-                playlists.add(newPl);
-                PlaylistManager.createPlaylist(name.trim(), userId);
-                System.out.println("Created new playlist: " + name);
-                addPlaylistToSidebar(newPl);
-                refreshPlaylists();
+            String trimmedName = name.trim();
+            if (!trimmedName.isEmpty()) {
+                boolean exists = playlists.stream().anyMatch(pl -> pl.getName().equalsIgnoreCase(trimmedName));
+                if (exists) {
+                    // Show error dialog if playlist with this name already exists
+                    javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("A playlist with this name already exists!");
+                    alert.showAndWait();
+                } else {
+                    Playlist newPl = new Playlist(trimmedName, new ArrayList<>());
+                    playlists.add(newPl);
+                    PlaylistManager.createPlaylist(trimmedName, userId);
+                    System.out.println("Created new playlist: " + trimmedName);
+                    addPlaylistToSidebar(newPl);
+                    refreshPlaylists();
+                    // Dodano: odświeżenie wyników wyszukiwania, aby ComboBoxy miały aktualne playlisty
+                    filterSongs(searchField.getText());
+                }
             }
         });
     }
@@ -250,13 +285,73 @@ public class MainViewController {
     }
 
     private void addPlaylistToSidebar(Playlist p) {
+        HBox row = new HBox(8);
+        row.setAlignment(Pos.CENTER_LEFT);
+
         Button btn = new Button(p.getName());
         btn.setMaxWidth(Double.MAX_VALUE);
+        // Podświetl aktywną playlistę
+        if (currentPlaylist != null && p.getName().equals(currentPlaylist.getName())) {
+            btn.setStyle("-fx-background-color: #4db3cf; -fx-text-fill: white; -fx-font-weight: bold;");
+        } else {
+            btn.setStyle("");
+        }
         btn.setOnAction(e -> {
             currentPlaylist = p;
             showPlaylistSongs(p);
+            // Odśwież podświetlenie po zmianie aktywnej playlisty
+            for (Node node : playlistContainer.getChildren()) {
+                if (node instanceof HBox hbox) {
+                    for (Node child : hbox.getChildren()) {
+                        if (child instanceof Button b && b.getText().equals(currentPlaylist.getName())) {
+                            b.setStyle("-fx-background-color: #4db3cf; -fx-text-fill: white; -fx-font-weight: bold;");
+                        } else if (child instanceof Button b2) {
+                            b2.setStyle("");
+                        }
+                    }
+                }
+            }
         });
-        playlistContainer.getChildren().add(btn);
+
+        Button deleteBtn = new Button("✖");
+        deleteBtn.setStyle("-fx-background-radius: 10; -fx-background-color: transparent; -fx-text-fill: #bbb; -fx-font-size: 13px; -fx-cursor: hand; -fx-padding: 0 6 0 6;");
+        deleteBtn.setTooltip(new javafx.scene.control.Tooltip("Usuń playlistę"));
+        deleteBtn.setOnAction(e -> {
+            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Delete Playlist");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure you want to delete the playlist '" + p.getName() + "'?");
+            var pane = alert.getDialogPane();
+            pane.setStyle("-fx-background-color: #232323; -fx-border-color: #cf4d4d; -fx-border-width: 2px; -fx-background-radius: 10; -fx-border-radius: 10;");
+            pane.getStyleClass().add("white-prompt");
+            pane.getStylesheets().add(getClass().getResource("/ui/style.css").toExternalForm());
+            alert.getDialogPane().getButtonTypes().forEach(type -> {
+                Node btnNode = alert.getDialogPane().lookupButton(type);
+                if (btnNode != null) {
+                    if (type.getButtonData().isDefaultButton()) {
+                        btnNode.setStyle("-fx-background-color: #cf4d4d; -fx-text-fill: white; -fx-background-radius: 8;");
+                    } else {
+                        btnNode.setStyle("-fx-background-color: #444; -fx-text-fill: #fff; -fx-background-radius: 8;");
+                    }
+                }
+            });
+            alert.showAndWait().ifPresent(result -> {
+                if (result == javafx.scene.control.ButtonType.OK) {
+                    PlaylistManager.removePlaylist(p.getId());
+                    playlists.removeIf(pl -> pl.getId().equals(p.getId()));
+                    refreshPlaylists();
+                    if (currentPlaylist != null && currentPlaylist.getId().equals(p.getId())) {
+                        currentPlaylist = null;
+                        songsContainer.getChildren().clear();
+                        songTitleLabel.setText("Currently playing: -");
+                    }
+                }
+            });
+        });
+
+        HBox.setHgrow(btn, Priority.ALWAYS);
+        row.getChildren().addAll(btn, deleteBtn);
+        playlistContainer.getChildren().add(row);
     }
 
     private void showPlaylistSongs(Playlist playlist) {
@@ -346,6 +441,7 @@ public class MainViewController {
             addBtn.setOnAction(ev -> {
                 for (String playlistName : playlistCheckComboBox.getCheckModel().getCheckedItems()) {
                     addSongToPlaylist(song, playlistName);
+                    System.out.println(playlistName);
                 }
             });
 
@@ -382,7 +478,9 @@ public class MainViewController {
         Button addBtn = new Button("Dodaj");
         addBtn.setStyle("-fx-background-radius: 5; -fx-background-color: #4db34d; -fx-text-fill: white;");
         addBtn.setOnAction(ev -> {
+            System.out.println("kliknieto");
             for (String playlistName : playlistCheckComboBox.getCheckModel().getCheckedItems()) {
+                System.out.println(playlistName);
                 addSongToPlaylist(song, playlistName);
             }
         });
@@ -456,15 +554,16 @@ private void showProfile() {
     Label userLabel = new Label("Username: " + getCurrentUsername());
     userLabel.setStyle("-fx-text-fill: #4db3cf; -fx-font-size: 22px;");
 
-    // Password (kropki)
-    String password = LoginController.password != null ? LoginController.password : "";
-    String dots = password.isEmpty() ? "No password" : "•".repeat(password.length());
-    Label passwordTextLabel = new Label("Password:");
-    passwordTextLabel.setStyle("-fx-text-fill: #4db3cf; -fx-font-size: 18px;");
-    Label passwordDotsLabel = new Label(dots);
-    passwordDotsLabel.setStyle("-fx-text-fill: #4db3cf; -fx-font-size: 18px;");
+    // Liczba załadowanych playlist
+    Label playlistCountLabel = new Label("Loaded playlists: " + playlists.size());
+    playlistCountLabel.setStyle("-fx-text-fill: #4db3cf; -fx-font-size: 18px;");
 
-    sidebar.getChildren().addAll(backBtn, userLabel, passwordTextLabel, passwordDotsLabel);
+    // Liczba wszystkich piosenek we wszystkich playlistach
+    int totalSongs = playlists.stream().mapToInt(pl -> pl.getSongs().size()).sum();
+    Label songsInPlaylistsLabel = new Label("Songs in playlists: " + totalSongs);
+    songsInPlaylistsLabel.setStyle("-fx-text-fill: #4db3cf; -fx-font-size: 18px;");
+
+    sidebar.getChildren().addAll(backBtn, userLabel, playlistCountLabel, songsInPlaylistsLabel);
 
     profileOverlay.getChildren().add(sidebar);
     AnchorPane.setRightAnchor(sidebar, 0.0);
@@ -497,13 +596,11 @@ private BorderPane createProfilePane() {
     Label userLabel = new Label("Username: " + getCurrentUsername());
     userLabel.setStyle("-fx-text-fill: #4db3cf; -fx-font-size: 22px;");
 
-    // Dodaj etykietę z hasłem jako kropki
-    String password = LoginController.password != null ? LoginController.password : "";
-    String dots = "•".repeat(password.length());
-    Label passwordLabel = new Label("password: " + dots);
-    passwordLabel.setStyle("-fx-text-fill: #4db3cf; -fx-font-size: 18px;");
+    // Zamiast hasła, liczba załadowanych playlist
+    Label playlistCountLabel = new Label("Loaded playlists: " + playlists.size());
+    playlistCountLabel.setStyle("-fx-text-fill: #4db3cf; -fx-font-size: 18px;");
 
-    centerBox.getChildren().addAll(userLabel, passwordLabel);
+    centerBox.getChildren().addAll(userLabel, playlistCountLabel);
 
     profilePane.setTop(topBox);
     profilePane.setCenter(centerBox);
@@ -539,4 +636,16 @@ private BorderPane createProfilePane() {
             parent = parent.getParent();
         }
     }
-}
+
+    private boolean isDescendantFocused(VBox container) {
+    if (container.isFocused()) return true;
+    for (Node child : container.getChildren()) {
+        if (child.isFocused()) return true;
+        if (child instanceof HBox hbox) {
+            for (Node hChild : hbox.getChildren()) {
+                if (hChild.isFocused()) return true;
+            }
+        }
+    }
+    return false;
+    }}

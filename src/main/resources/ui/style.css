@@ -89,3 +89,8 @@
   background-color: #5b5757; /* tło, żeby było czytelne */
   z-index: 1000;       /* żeby była na wierzchu */
 }
+
+/* Dodane: białe prompt text do dialogów */
+.white-prompt .text-field {
+    -fx-prompt-text-fill: white;
+}

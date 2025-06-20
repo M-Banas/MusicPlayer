@@ -12,31 +12,20 @@
             <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-padding: 30 0 0 0;">
                 <Label text="🎵 Music Player" styleClass="header"/>
                 <Region fx:id="spacer" HBox.hgrow="ALWAYS"/>
-                <Button fx:id="profileButton" text="👤" style="-fx-font-size: 18px; -fx-text-fill: #4db3cf; -fx-background-color: transparent;"/>
+                <Button fx:id="profileButton" text="Profile" style="-fx-font-size: 18px; -fx-text-fill: #4db3cf; -fx-background-color: transparent;"/>
             </HBox>
         </top>
 
         <center>
-            <VBox fx:id="centerVBox" spacing="10" alignment="TOP_CENTER">
-                <!-- Searchbar i wyniki -->
-                <HBox fx:id="searchBarBox" spacing="10" alignment="CENTER">
-                    <Button fx:id="homeButton" text="🏠" onAction="#handleHome"
-                            style="-fx-background-radius: 10; -fx-font-size: 18px;"/>
-                    <TextField fx:id="searchField" promptText="Wyszukaj piosenkę..." prefWidth="600"
-                            style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-padding: 5 10 5 10;"/>
-                    <Button fx:id="searchButton" text="🔍" onAction="#handleSearch"
-                            style="-fx-background-radius: 10; -fx-padding: 5 15; -fx-font-size: 14px;"/>
-                </HBox>
-                <HBox alignment="CENTER" spacing="0">
-                    <ScrollPane fitToWidth="true" fitToHeight="false" prefHeight="200" maxHeight="200" prefWidth="600" maxWidth="600" style="-fx-background: transparent; -fx-background-color: transparent;">
-                        <VBox fx:id="searchResultsContainer" spacing="5" alignment="CENTER_LEFT"
-                              prefWidth="600" maxWidth="600" maxHeight="200"
-                              style="-fx-background-color: #2a2a2a; -fx-padding: 0; -fx-border-color: #444; -fx-border-width: 1; -fx-background-radius: 10;">
-                        </VBox>
-                    </ScrollPane>
-                </HBox>
-
-                <StackPane>
+            <StackPane>
+                <VBox fx:id="centerVBox" spacing="10" alignment="TOP_CENTER">
+                    <!-- Searchbar i wyniki -->
+                    <HBox fx:id="searchBarBox" spacing="10" alignment="CENTER">
+                        <Button fx:id="homeButton" text="Home" onAction="#handleHome"
+                                style="-fx-background-radius: 10; -fx-font-size: 18px;"/>
+                        <TextField fx:id="searchField" promptText="Wyszukaj piosenkę..." prefWidth="600"
+                                style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-padding: 5 10 5 10;"/>
+                    </HBox>
                     <Pane minHeight="200" minWidth="900">
                         <!-- Strzałka do przycisku "Dodaj playlistę" (lewa, odbicie lustrzane, wyżej) -->
                         <ImageView fitWidth="110" fitHeight="65" layoutX="30" layoutY="0" scaleX="-1">
@@ -57,7 +46,6 @@
                                style="-fx-text-fill: #4db3cf; -fx-font-size: 22px;"
                                layoutX="630" layoutY="100"/>
                     </Pane>
-
                     <VBox fx:id="playlistBox" spacing="15" style="-fx-background-color: #1e1e1e;" visible="false" managed="false">
                         <padding>
                             <Insets top="10" right="10" bottom="10" left="10" />
@@ -77,8 +65,14 @@
                         </HBox>
                         <Slider fx:id="progressSlider" min="0" max="100" value="0" prefWidth="300"/>
                     </VBox>
-                </StackPane>
-            </VBox>
+                </VBox>
+                <ScrollPane fx:id="searchScrollPane" fitToWidth="true" fitToHeight="false" prefHeight="200" maxHeight="200" prefWidth="600" maxWidth="600" style="-fx-background: transparent; -fx-background-color: transparent; -fx-translate-y: 30;" visible="false" managed="false" StackPane.alignment="TOP_CENTER">
+                    <VBox fx:id="searchResultsContainer" spacing="5" alignment="CENTER_LEFT"
+                          prefWidth="600" maxWidth="600" maxHeight="200"
+                          style="-fx-background-color: #2a2a2a; -fx-padding: 0; -fx-border-color: #444; -fx-border-width: 1; -fx-background-radius: 10;">
+                    </VBox>
+                </ScrollPane>
+            </StackPane>
         </center>
 
         <left>

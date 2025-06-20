@@ -373,10 +373,13 @@ public class MainViewController {
             Button playBtn = new Button("▶");
             playBtn.setStyle("-fx-background-radius: 5; -fx-background-color: #4db3cf; -fx-text-fill: white;");
             playBtn.setOnAction(e -> {
+                player.stop();
                 player.load(playlist, songIndex);
                 player.play();
                 songTitleLabel.setText("Currently playing: " + song.getTitle());
                 currentIndex = songIndex;
+                currentPlaylist = playlist;
+                startTimer();
             });
             Button deleteBtn = new Button("DELETE");
             deleteBtn.setStyle("-fx-background-radius: 5; -fx-background-color: #4db3cf; -fx-text-fill: white;");
@@ -425,7 +428,34 @@ public class MainViewController {
 
             Button playButton = new Button("🔊");
             playButton.setStyle("-fx-background-color: #4db3cf; -fx-text-fill: white; -fx-background-radius: 5;");
-            playButton.setOnAction(e -> playSong(song));
+            playButton.setOnAction(e -> {
+                player.stop();
+                // Find the playlist containing this song
+                Playlist containingPlaylist = currentPlaylist;
+                if (containingPlaylist == null || !containingPlaylist.getSongs().contains(song)) {
+                    for (Playlist pl : playlists) {
+                        if (pl.getSongs().contains(song)) {
+                            containingPlaylist = pl;
+                            break;
+                        }
+                    }
+                }
+                if (containingPlaylist != null) {
+                    int idx = containingPlaylist.getSongs().indexOf(song);
+                    currentPlaylist = containingPlaylist;
+                    currentIndex = idx;
+                    player.load(containingPlaylist, idx);
+                    player.play();
+                    songTitleLabel.setText("Currently playing: " + song.getTitle());
+                } else {
+                    player.load(new Playlist("Single", List.of(song)), 0);
+                    player.play();
+                    songTitleLabel.setText("Currently playing: " + song.getTitle());
+                    currentPlaylist = null;
+                    currentIndex = 0;
+                }
+                startTimer();
+            });
 
             Label songLabel = new Label(song.getTitle() + " - " + song.getArtist());
             songLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
@@ -463,7 +493,10 @@ public class MainViewController {
 
         Button playButton = new Button("🔊");
         playButton.setStyle("-fx-background-color: #4db3cf; -fx-text-fill: white; -fx-background-radius: 5;");
-        playButton.setOnAction(e -> playSong(song));
+        playButton.setOnAction(e -> {
+            player.stop();
+            playSong(song);
+        });
 
         Label songLabel = new Label(song.getTitle());
         songLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");

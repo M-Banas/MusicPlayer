@@ -80,6 +80,7 @@ public class MainViewController {
         searchResultsContainer.prefWidthProperty().bind(searchField.widthProperty());
         searchResultsContainer.maxWidthProperty().bind(searchField.widthProperty());
         searchResultsContainer.setPadding(new Insets(10));
+        searchResultsContainer.setTranslateX(50); // shift right by 40px for alignment
         searchResultsContainer.setSpacing(10);
         
         progressSlider.setOnMousePressed(e -> isSeeking = true);
@@ -426,7 +427,7 @@ public class MainViewController {
             songBox.setPadding(new Insets(5));
             songBox.setStyle("-fx-background-color: #2a2a2a; -fx-background-radius: 8;");
 
-            Button playButton = new Button("🔊");
+            Button playButton = new Button("▶");
             playButton.setStyle("-fx-background-color: #4db3cf; -fx-text-fill: white; -fx-background-radius: 5;");
             playButton.setOnAction(e -> {
                 player.stop();
@@ -491,7 +492,7 @@ public class MainViewController {
         songBox.setPadding(new Insets(5));
         songBox.setStyle("-fx-background-color: #2a2a2a; -fx-background-radius: 8;");
 
-        Button playButton = new Button("🔊");
+        Button playButton = new Button("▶");
         playButton.setStyle("-fx-background-color: #4db3cf; -fx-text-fill: white; -fx-background-radius: 5;");
         playButton.setOnAction(e -> {
             player.stop();

@@ -38,8 +38,10 @@ public class RegisterController {
                 "&password=" + HttpUtil.encodeParam(password));
 
             int responseCode = connection.getResponseCode();
-            
-            if (HttpUtil.isSuccessful(responseCode)) {
+            if (responseCode == 500) {
+                // Obsługa istniejącego użytkownika (backend rzuca wyjątek)
+                showAlert(Alert.AlertType.ERROR, "Błąd", "Nazwa użytkownika już istnieje", "Wybierz inną nazwę użytkownika.");
+            } else if (HttpUtil.isSuccessful(responseCode)) {
                 showAlert(Alert.AlertType.INFORMATION, "Sukces", "Rejestracja udana", "Możesz się teraz zalogować.");
                 handleBackToLogin();
             } else {

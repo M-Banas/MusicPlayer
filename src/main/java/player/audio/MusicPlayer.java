@@ -5,12 +5,12 @@ import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import player.model.Playlist;
 
+//singleton
 public class MusicPlayer {
     private static MusicPlayer instance;
     private MediaPlayer mediaPlayer;
 
     private MusicPlayer() {
-        // Private constructor to prevent instantiation
     }
 
     public static MusicPlayer getInstance() {
@@ -44,13 +44,6 @@ public class MusicPlayer {
         mediaPlayer.setOnEndOfMedia(onEnd);
     }
 
-    // public void play() {
-    //     if (mediaPlayer != null) {
-    //         mediaPlayer.play();
-    //     } else {
-    //         System.out.println("mediaPlayer nie jest zainicjalizowany, nie można odtworzyć");
-    //     }
-    // }
 
 
     public void setOnEndOfMedia(Runnable r) {
@@ -77,12 +70,10 @@ public class MusicPlayer {
     public void play() {
         if (mediaPlayer != null) {
             mediaPlayer.play();
-            System.out.println("a");
         }
     }
 
     public void playOrResume(Playlist play, int i) {
-        // Jeśli play lub play.getSongs() są puste, nie rób nic
         if (play == null || play.getSongs() == null || play.getSongs().isEmpty()) {
             System.out.println("[BŁĄD] Brak playlisty lub piosenek do odtworzenia.");
             return;
@@ -182,7 +173,6 @@ public class MusicPlayer {
 
     public void setRate(double rate) {
         if (mediaPlayer != null) {
-            // Ustawienie prędkości odtwarzania **po** załadowaniu medi (gdy MediaPlayer jest READY)
             mediaPlayer.setOnReady(() -> {
                 mediaPlayer.setRate(rate);
             });

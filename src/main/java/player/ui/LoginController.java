@@ -44,7 +44,6 @@ public class LoginController {
         try {
             HttpURLConnection connection = HttpUtil.getGetConnection("/person/login?username=" + HttpUtil.encodeParam(user) + "&password=" + HttpUtil.encodeParam(pass));
             response = HttpUtil.readResponse(connection);
-            System.out.println("Response: " + response);
         } catch (Exception e) {
             e.printStackTrace();
             // Błąd połączenia z serwerem
@@ -61,7 +60,6 @@ public class LoginController {
             return;
         }
         if (response == null || response.isEmpty() || response.equals("null")) {
-            // Błędne dane logowania
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Błąd logowania");
             alert.setHeaderText("Nieprawidłowa nazwa użytkownika lub hasło");
@@ -77,7 +75,6 @@ public class LoginController {
             userId = response;
             username = user;
             password = pass;
-            System.out.println("Zalogowano jako użytkownik o ID: " + userId);
             isLoggedIn = true;
             Stage stage = (Stage) usernameField.getScene().getWindow();
             stage.close();

@@ -60,8 +60,7 @@
                             <Button fx:id="playButton" text="▶ Play" onAction="#handlePlay"/>
                             <Button fx:id="pauseButton" text="❚❚ Pause" onAction="#handlePause"/>
                             <Button fx:id="stopButton" text="■ Stop" onAction="#handleStop"/>
-                            <Button fx:id="nextButton" text="⏭ Next" onAction="#handleNext"/>
-                            <Button fx:id="shuffleButton" text="🔀 Shuffle" onAction="#handleShuffle"/>
+                            <Button fx:id="nextButton" text=">> Next" onAction="#handleNext"/>
                         </HBox>
                         <Slider fx:id="progressSlider" min="0" max="100" value="0" prefWidth="300"/>
                     </VBox>

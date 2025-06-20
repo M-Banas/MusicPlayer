@@ -79,3 +79,13 @@
     -fx-text-fill: white;
     -fx-prompt-text-fill: white;
 }
+
+.list {
+  position: absolute;  /* lub fixed, jeśli chcesz względem okna */
+  top: 0;              /* lub gdzie chcesz ją umieścić */
+  left: 0;
+  width: 100%;         /* zajmuje szerokość ekranu */
+  height: auto;        /* albo np. height: 300px */
+  background-color: #5b5757; /* tło, żeby było czytelne */
+  z-index: 1000;       /* żeby była na wierzchu */
+}

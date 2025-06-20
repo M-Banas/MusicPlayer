@@ -58,7 +58,7 @@
                                layoutX="630" layoutY="100"/>
                     </Pane>
 
-                    <VBox fx:id="playlistBox" spacing="15" style="-fx-background-color: #1e1e1e;">
+                    <VBox fx:id="playlistBox" spacing="15" style="-fx-background-color: #1e1e1e;" visible="false" managed="false">
                         <padding>
                             <Insets top="10" right="10" bottom="10" left="10" />
                         </padding>

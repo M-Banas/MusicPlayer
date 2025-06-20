@@ -40,31 +40,43 @@ public class LoginController {
     private void handleLogin() {
         String user = usernameField.getText();
         String pass = passwordField.getText();
-        String response=null;
+        String response = null;
         try {
             HttpURLConnection connection = HttpUtil.getGetConnection("/person/login?username=" + HttpUtil.encodeParam(user) + "&password=" + HttpUtil.encodeParam(pass));
             response = HttpUtil.readResponse(connection);
             System.out.println("Response: " + response);
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        if(response == null || response.isEmpty()) {
+            // Błąd połączenia z serwerem
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Błąd logowania");
             alert.setHeaderText("Nie można połączyć się z serwerem");
             alert.setContentText("Sprawdź połączenie internetowe lub spróbuj ponownie później.");
 
             DialogPane dialogPane = alert.getDialogPane();
-            dialogPane.getStylesheets().add(
-                    getClass().getResource("/ui/style.css").toExternalForm());
+            dialogPane.getStylesheets().add(getClass().getResource("/ui/style.css").toExternalForm());
             dialogPane.getStyleClass().add("custom-alert");
 
             alert.showAndWait();
             return;
         }
-        else {
+        if (response == null || response.isEmpty() || response.equals("null")) {
+            // Błędne dane logowania
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Błąd logowania");
+            alert.setHeaderText("Nieprawidłowa nazwa użytkownika lub hasło");
+            alert.setContentText("Spróbuj ponownie. Jeśli nie masz konta, zarejestruj się.");
+
+            DialogPane dialogPane = alert.getDialogPane();
+            dialogPane.getStylesheets().add(getClass().getResource("/ui/style.css").toExternalForm());
+            dialogPane.getStyleClass().add("custom-alert");
+
+            alert.showAndWait();
+            return;
+        } else {
             userId = response;
             username = user;
+            password = pass;
             System.out.println("Zalogowano jako użytkownik o ID: " + userId);
             isLoggedIn = true;
             Stage stage = (Stage) usernameField.getScene().getWindow();

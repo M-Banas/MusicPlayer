@@ -82,27 +82,32 @@ public class LoginController {
     }
 
     @FXML
-    private void handleRegister() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/RegisterView.fxml"));
-            Parent registerRoot = loader.load();
-            Scene registerScene = new Scene(registerRoot);
-            registerScene.getStylesheets().add(getClass().getResource("/ui/style.css").toExternalForm());
+private void handleRegister() {
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/RegisterView.fxml"));
+        Parent registerRoot = loader.load();
+        Scene registerScene = new Scene(registerRoot);
+        registerScene.getStylesheets().add(getClass().getResource("/ui/style.css").toExternalForm());
 
-            Stage stage = (Stage) usernameField.getScene().getWindow();
-            stage.setScene(registerScene);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Błąd");
-            alert.setHeaderText("Nie można otworzyć formularza rejestracji");
-            alert.setContentText("Spróbuj ponownie później.");
+        Stage registerStage = new Stage();
+        registerStage.setScene(registerScene);
+        registerStage.setTitle("Rejestracja");
+        registerStage.setMaximized(true);  // max rozmiar okna
+        registerStage.show();
 
-            DialogPane dialogPane = alert.getDialogPane();
-            dialogPane.getStylesheets().add(getClass().getResource("/ui/style.css").toExternalForm());
-            dialogPane.getStyleClass().add("custom-alert");
+    } catch (Exception e) {
+        e.printStackTrace();
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Błąd");
+        alert.setHeaderText("Nie można otworzyć formularza rejestracji");
+        alert.setContentText("Spróbuj ponownie później.");
 
-            alert.showAndWait();
-        }
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(getClass().getResource("/ui/style.css").toExternalForm());
+        dialogPane.getStyleClass().add("custom-alert");
+
+        alert.showAndWait();
     }
+}
+
 }

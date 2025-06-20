@@ -2,6 +2,7 @@ package player.ui;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.controlsfx.control.CheckComboBox;
@@ -171,8 +172,6 @@ public class MainViewController {
         if (currentIndex < 0 || currentIndex >= currentPlaylist.getSongs().size()) {
             currentIndex = 0;
         }
-        songTitleLabel.setText("Currently playing: " + currentPlaylist.getSongs().get(currentIndex).title);
-        player.playOrResume(currentPlaylist, currentIndex);
         startTimer();
     }
 
@@ -186,12 +185,53 @@ public class MainViewController {
         player.stop();
     }
 
+    private boolean isShuffleActive;
+    private Playlist shuffledPlaylist;
+    
     @FXML
     private void handleNext() {
-        currentIndex = (currentIndex + 1) % currentPlaylist.getSongs().size();
-        songTitleLabel.setText("Currently playing: " + currentPlaylist.getSongs().get(currentIndex).title);
-        player.next(currentPlaylist, currentIndex, this::handleNext);
+        if (isShuffleActive) {
+            currentIndex = (currentIndex + 1) % shuffledPlaylist.getSongs().size();
+            songTitleLabel.setText("Currently playing: " + shuffledPlaylist.getSongs().get(currentIndex).getTitle());
+            player.next(shuffledPlaylist, currentIndex, this::handleNext);
+        } else {
+            currentIndex = (currentIndex + 1) % currentPlaylist.getSongs().size();
+            songTitleLabel.setText("Currently playing: " + currentPlaylist.getSongs().get(currentIndex).getTitle());
+            player.next(currentPlaylist, currentIndex, this::handleNext);
+        }
         startTimer();
+    }
+
+    private void playSongFromPlaylist(Playlist playlist, int songIndex) {
+        player.stop();
+        player.load(playlist, songIndex);
+        player.play();
+        Song song = playlist.getSongs().get(songIndex);
+        songTitleLabel.setText("Currently playing: " + song.getTitle());
+        currentIndex = songIndex;
+        currentPlaylist = playlist;
+        startTimer();
+    }
+
+    private void generateShuffledPlaylist() {
+        List<Song> songs = currentPlaylist.getSongs();
+        List<Song> shuffledSongs = new ArrayList<>(songs);
+        Collections.shuffle(shuffledSongs);
+        shuffledPlaylist = new Playlist(currentPlaylist.getId(), currentPlaylist.getName(), shuffledSongs);
+    }
+
+
+    @FXML
+    private void handleShuffleToggle() {
+        isShuffleActive = !isShuffleActive;
+        if (isShuffleActive) {
+            generateShuffledPlaylist();
+            currentIndex = 0;
+            playSongFromPlaylist(shuffledPlaylist, currentIndex);
+        } else {
+            currentIndex = 0;
+            playSongFromPlaylist(currentPlaylist, currentIndex);
+        }
     }
 
     private void startTimer() {
@@ -363,6 +403,7 @@ public class MainViewController {
             Button playBtn = new Button("▶");
             playBtn.setStyle("-fx-background-radius: 5; -fx-background-color: #4db3cf; -fx-text-fill: white;");
             playBtn.setOnAction(e -> {
+                //playSongFromPlaylist(playlist, songIndex);
                 player.stop();
                 player.load(playlist, songIndex);
                 player.play();

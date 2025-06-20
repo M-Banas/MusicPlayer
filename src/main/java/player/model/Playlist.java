@@ -10,6 +10,13 @@ public class Playlist {
         this.name = name;
         this.songs = songs;
     }
+    
+    public Playlist(String id, String name, List<Song> songs) {
+        this.id = id;
+        this.name = name;
+        this.songs = songs;
+    }
+
 
     public String getName() { return name; }
     public List<Song> getSongs() { return songs; }

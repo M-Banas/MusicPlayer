@@ -1,5 +1,6 @@
 package player.ui;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -43,7 +44,8 @@ public class RegisterController {
                 showAlert(Alert.AlertType.ERROR, "Błąd", "Nazwa użytkownika już istnieje", "Wybierz inną nazwę użytkownika.");
             } else if (HttpUtil.isSuccessful(responseCode)) {
                 showAlert(Alert.AlertType.INFORMATION, "Sukces", "Rejestracja udana", "Możesz się teraz zalogować.");
-                handleBackToLogin();
+                Stage currentStage = (Stage) usernameField.getScene().getWindow();
+                currentStage.close();
             } else {
                 showAlert(Alert.AlertType.ERROR, "Błąd", "Rejestracja nieudana", "Spróbuj ponownie później.");
             }
@@ -73,20 +75,31 @@ public class RegisterController {
     }
 
     @FXML
-    private void handleBackToLogin() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/LoginView.fxml"));
-            Parent loginRoot = loader.load();
-            Scene loginScene = new Scene(loginRoot);
-            loginScene.getStylesheets().add(getClass().getResource("/ui/style.css").toExternalForm());
+private void handleBackToLogin() {
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/LoginView.fxml"));
+        Parent root = loader.load();
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("/ui/style.css").toExternalForm());
 
-            Stage stage = (Stage) usernameField.getScene().getWindow();
-            stage.setScene(loginScene);
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Błąd", "Błąd aplikacji", "Nie można wrócić do ekranu logowania.");
-        }
+        Stage currentStage = (Stage) usernameField.getScene().getWindow();
+
+        // Zamień scenę w tym samym oknie
+        currentStage.setScene(scene);
+        currentStage.setTitle("Logowanie");
+
+        // ZAMIENIAMY to: currentStage.setMaximized(true);
+        // NA np. ustawienie preferowanego rozmiaru okna
+        currentStage.setWidth(600);
+        currentStage.setHeight(400);
+        currentStage.centerOnScreen();
+
+    } catch (IOException e) {
+        e.printStackTrace();
+        showAlert(Alert.AlertType.ERROR, "Błąd", "Błąd aplikacji", "Nie można wrócić do ekranu logowania.");
     }
+}
+
 
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);

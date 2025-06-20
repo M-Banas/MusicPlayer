@@ -4,11 +4,11 @@
 <?import javafx.scene.layout.*?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml" fx:controller="player.ui.LoginController" style="-fx-background-color: #181818;">
-    <VBox spacing="20" alignment="CENTER" maxWidth="350">
+    <VBox spacing="20" alignment="CENTER" maxWidth="10000" maxHeight="10000" prefWidth="10000" prefHeight="10000">
         <Label text="Zaloguj się" styleClass="header"/>
-        <TextField fx:id="usernameField" promptText="user" prefWidth="220"/>
-        <PasswordField fx:id="passwordField" promptText="••••" prefWidth="220"/>
-        <Button text="Login" onAction="#handleLogin" prefWidth="120"/>
+        <TextField fx:id="usernameField" promptText="Nazwa użytkownika" prefWidth="300" maxWidth="300" onAction="#handleLogin"/>
+        <PasswordField fx:id="passwordField" promptText="Hasło" prefWidth="300" maxWidth="300" onAction="#handleLogin"/>
+        <Button text="Zaloguj" onAction="#handleLogin" prefWidth="120"/>
         <HBox spacing="10" alignment="CENTER">
             <Label text="Nie masz konta?" style="-fx-text-fill: white;"/>
             <Button text="Zarejestruj się" onAction="#handleRegister" styleClass="link-button"/>

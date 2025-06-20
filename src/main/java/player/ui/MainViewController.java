@@ -56,7 +56,7 @@ public class MainViewController {
     private Playlist currentPlaylist;
     private SongRepository songRepository = new SongRepository();
 
-    private final MusicPlayer player = new MusicPlayer();
+    private final MusicPlayer player = MusicPlayer.getInstance();
     //private Playlist playlist;
     private int currentIndex = 0;
     private boolean isSeeking = false;
@@ -98,6 +98,22 @@ public class MainViewController {
         // Obsługa wyszukiwania
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
             filterSongs(newValue);
+        });
+        // Ukrywanie podpowiedzi po utracie fokusu
+        searchField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused) {
+                searchResultsContainer.setVisible(false);
+                searchResultsContainer.setManaged(false);
+                hideParentScrollPane(searchResultsContainer);
+            }
+        });
+        // Pokazuj i zarządzaj widocznością przy wpisywaniu
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filterSongs(newValue);
+            boolean show = !newValue.isEmpty();
+            searchResultsContainer.setVisible(show);
+            searchResultsContainer.setManaged(show);
+            showParentScrollPane(searchResultsContainer, show);
         });
 
         // Pokaż panel home na start
@@ -147,6 +163,15 @@ public class MainViewController {
 
     @FXML
     private void handlePlay() {
+        if (currentPlaylist == null || currentPlaylist.getSongs().isEmpty()) {
+            System.out.println("Brak piosenek w playliście!//handleplay");
+            songTitleLabel.setText("Currently playing: -");
+            return;
+        }
+        // Jeśli currentIndex jest poza zakresem, ustaw na 0
+        if (currentIndex < 0 || currentIndex >= currentPlaylist.getSongs().size()) {
+            currentIndex = 0;
+        }
         songTitleLabel.setText("Currently playing: " + currentPlaylist.getSongs().get(currentIndex).title);
         player.playOrResume(currentPlaylist, currentIndex);
         startTimer();
@@ -236,6 +261,7 @@ public class MainViewController {
 
     private void showPlaylistSongs(Playlist playlist) {
         refreshPlaylists();
+        currentPlaylist=playlist;
         //homeBox.setVisible(false);
         //homeBox.setManaged(false);
         playlistBox.setVisible(true);
@@ -489,4 +515,28 @@ private BorderPane createProfilePane() {
         return LoginController.username != null ? LoginController.username : "Unknown";
     }
 
+    // Pomocnicza metoda do ukrywania najbliższego nadrzędnego ScrollPane
+    private void hideParentScrollPane(Node node) {
+        Node parent = node.getParent();
+        while (parent != null) {
+            if (parent instanceof javafx.scene.control.ScrollPane scroll) {
+                scroll.setVisible(false);
+                scroll.setManaged(false);
+                break;
+            }
+            parent = parent.getParent();
+        }
+    }
+    // Pomocnicza metoda do pokazywania najbliższego nadrzędnego ScrollPane
+    private void showParentScrollPane(Node node, boolean show) {
+        Node parent = node.getParent();
+        while (parent != null) {
+            if (parent instanceof javafx.scene.control.ScrollPane scroll) {
+                scroll.setVisible(show);
+                scroll.setManaged(show);
+                break;
+            }
+            parent = parent.getParent();
+        }
+    }
 }

@@ -1,11 +1,11 @@
-C:\Users\Beata\Desktop\Odtwarzacz muzyki PROJEKT JAVA\MusicPlayer\src\main\java\player\audio\MusicPlayer.java
-C:\Users\Beata\Desktop\Odtwarzacz muzyki PROJEKT JAVA\MusicPlayer\src\main\java\player\model\SongRepository.java
-C:\Users\Beata\Desktop\Odtwarzacz muzyki PROJEKT JAVA\MusicPlayer\src\main\java\player\manager\PlaylistManager.java
-C:\Users\Beata\Desktop\Odtwarzacz muzyki PROJEKT JAVA\MusicPlayer\src\main\java\player\model\Song.java
-C:\Users\Beata\Desktop\Odtwarzacz muzyki PROJEKT JAVA\MusicPlayer\src\main\java\player\util\FileChooserHelper.java
-C:\Users\Beata\Desktop\Odtwarzacz muzyki PROJEKT JAVA\MusicPlayer\src\main\java\player\model\Playlist.java
-C:\Users\Beata\Desktop\Odtwarzacz muzyki PROJEKT JAVA\MusicPlayer\src\main\java\player\ui\Main.java
-C:\Users\Beata\Desktop\Odtwarzacz muzyki PROJEKT JAVA\MusicPlayer\src\main\java\player\ui\MainViewController.java
-C:\Users\Beata\Desktop\Odtwarzacz muzyki PROJEKT JAVA\MusicPlayer\src\main\java\player\util\HttpUtil.java
-C:\Users\Beata\Desktop\Odtwarzacz muzyki PROJEKT JAVA\MusicPlayer\src\main\java\player\ui\RegisterController.java
-C:\Users\Beata\Desktop\Odtwarzacz muzyki PROJEKT JAVA\MusicPlayer\src\main\java\player\ui\LoginController.java
+/home/harry9461/Pulpit/java/Music/src/main/java/player/util/HttpUtil.java
+/home/harry9461/Pulpit/java/Music/src/main/java/player/ui/LoginController.java
+/home/harry9461/Pulpit/java/Music/src/main/java/player/audio/MusicPlayer.java
+/home/harry9461/Pulpit/java/Music/src/main/java/player/manager/PlaylistManager.java
+/home/harry9461/Pulpit/java/Music/src/main/java/player/model/SongRepository.java
+/home/harry9461/Pulpit/java/Music/src/main/java/player/ui/Main.java
+/home/harry9461/Pulpit/java/Music/src/main/java/player/model/Playlist.java
+/home/harry9461/Pulpit/java/Music/src/main/java/player/util/FileChooserHelper.java
+/home/harry9461/Pulpit/java/Music/src/main/java/player/ui/MainViewController.java
+/home/harry9461/Pulpit/java/Music/src/main/java/player/ui/RegisterController.java
+/home/harry9461/Pulpit/java/Music/src/main/java/player/model/Song.java
